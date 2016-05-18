@@ -26,8 +26,8 @@ let config = {
 // Broadcasts a disconnect event if the client is set up.
 function handleDisconnect (socket) {
 
-	if (socket.id) {
-		socket.broadcast.emit('client-disconnect', socket.id);
+	if (socket.name) {
+		socket.broadcast.emit('client-disconnect', socket.name);
 	}
 
 }
@@ -39,8 +39,9 @@ function setupHost (socket) {
 		socket.emit('host-exists');
 	} else {
 
-		socket.id = 'Host';
+		socket.name = 'Host';
 		config.hostExists = true;
+		socket.emit('client-accepted', socket.name);
 
 	}
 
@@ -52,14 +53,18 @@ function socketType (socket, type) {
 	if (type === 'player') {
 
 		config.noPlayers++;
-		socket.id = `Player ${config.noPlayers}`;
+		socket.name = `Player ${config.noPlayers}`;
+		socket.emit('client-accepted', socket.name);
 
 	} else if (type === 'host') {
 		setupHost(socket);
 	} else if (type === 'screen') {
-		socket.id = 'Screen';
+
+		socket.name = 'Screen';
+		socket.emit('client-accepted', socket.name);
+
 	} else {
-		socket.emit('error', 'Client type not recognised.');
+		socket.emit('err', 'Client type not recognised.');
 	}
 
 }
