@@ -14,10 +14,15 @@ let server = http.Server(app);
 let socket = io(server);
 
 
+// ----- Middleware ----- //
+
+app.use(express.static('static'));
+
+
 // ----- Routes ----- //
 
 app.get('/', (req, res) => {
-	res.send('Hello, world.');
+	res.sendFile('index.html', { root: '.' });
 });
 
 
