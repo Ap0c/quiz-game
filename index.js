@@ -13,6 +13,55 @@ let app = express();
 let server = http.Server(app);
 let io = socketIO(server);
 
+let config = {
+	noPlayers: 0,
+	hostExists: false
+};
+
+
+// ----- Functions ----- //
+
+// Broadcasts a disconnect event if the client is set up.
+function handleDisconnect (socket) {
+
+	if (socket.id) {
+		socket.broadcast.emit('client-disconnect', socket.id);
+	}
+
+}
+
+// Sets up the host user.
+function setupHost (socket) {
+
+	if (config.hostExists) {
+		socket.emit('host-exists');
+	} else {
+
+		socket.id = 'Host';
+		config.hostExists = true;
+
+	}
+
+}
+
+// Sets up the client as one of the three types of user.
+function socketType (socket, type) {
+
+	if (type === 'player') {
+
+		config.noPlayers++;
+		socket.id = `Player ${noPlayers}`;
+
+	} else if (type === 'host') {
+		setupHost(socket);
+	} else if (type === 'screen') {
+		socket.id = 'Screen';
+	} else {
+		socket.emit('error', 'Client type not recognised.');
+	}
+
+}
+
 
 // ----- Middleware ----- //
 
@@ -30,10 +79,17 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
 
-	console.log('A player connected.');
+	console.log('A client connected.');
 
 	socket.on('disconnect', () => {
-		console.log('A player disconnected.');
+
+		console.log('A client disconnected.');
+		handleDisconnect(socket);
+
+	});
+
+	socket.on('type', (type) => {
+		socketType(socket, type);
 	});
 
 });
