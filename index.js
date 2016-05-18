@@ -104,6 +104,6 @@ io.on('connection', (socket) => {
 
 // ----- Start ----- //
 
-server.listen(PORT, () => {
+module.exports = server.listen(PORT, () => {
 	console.log(`App listening on ${PORT}.`);
 });
