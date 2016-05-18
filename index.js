@@ -1,3 +1,5 @@
+'use strict';
+
 // ----- Requires ----- //
 
 let express = require('express');
@@ -50,7 +52,7 @@ function socketType (socket, type) {
 	if (type === 'player') {
 
 		config.noPlayers++;
-		socket.id = `Player ${noPlayers}`;
+		socket.id = `Player ${config.noPlayers}`;
 
 	} else if (type === 'host') {
 		setupHost(socket);

@@ -4,7 +4,7 @@
   "description": "A web-based quiz game.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
     "start": "node index.js"
   },
   "author": "Ap0c",
@@ -12,5 +12,11 @@
   "dependencies": {
     "express": "^4.13.4",
     "socket.io": "^1.4.6"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.4.5",
+    "socket.io-client": "^1.4.6"
   }
 }
