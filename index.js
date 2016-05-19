@@ -25,6 +25,43 @@ let userList = [];
 
 // ----- Functions ----- //
 
+// Checks if a user exists by name.
+function userExists (list, name) {
+
+	let exists = list.find((user) => {
+		return user.name === name;
+	});
+
+	return exists ? true : false;
+
+}
+
+// Checks whether there are enough of required users, returns boolean.
+function correctUsers (socket) {
+
+	if (!userExists(userList, 'Host')) {
+		socket.emit('begin-fail', 'Need a host.');
+	} else if (!userExists(userList, 'Screen')) {
+		socket.emit('begin-fail', 'Need a screen.');
+	} else if (config.noPlayers < 2) {
+		socket.emit('begin-fail', 'Need at least 2 players.');
+	} else {
+		return true;
+	}
+
+	return false;
+
+}
+
+// Attempts to begin the game.
+function begin (socket) {
+
+	if (correctUsers) {
+		io.emit('begin');
+	}
+
+}
+
 // Adds user to list and sends acceptance message to client.
 function confirmUser (socket, name) {
 
@@ -106,6 +143,8 @@ io.on('connection', (socket) => {
 	socket.on('type', (type) => {
 		socketType(socket, type);
 	});
+
+	socket.on('begin', begin);
 
 });
 
