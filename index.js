@@ -20,8 +20,21 @@ let config = {
 	hostExists: false
 };
 
+let userList = [];
+
 
 // ----- Functions ----- //
+
+// Adds user to list and sends acceptance message to client.
+function confirmUser (socket, name) {
+
+	socket.name = name;
+	userList.push(socket);
+
+	socket.emit('client-accepted', name);
+	socket.broadcast.emit('new-user', name);
+
+}
 
 // Broadcasts a disconnect event if the client is set up.
 function handleDisconnect (socket) {
@@ -39,9 +52,8 @@ function setupHost (socket) {
 		socket.emit('host-exists');
 	} else {
 
-		socket.name = 'Host';
 		config.hostExists = true;
-		socket.emit('client-accepted', socket.name);
+		confirmUser(socket, 'Host');
 
 	}
 
@@ -53,16 +65,12 @@ function socketType (socket, type) {
 	if (type === 'player') {
 
 		config.noPlayers++;
-		socket.name = `Player ${config.noPlayers}`;
-		socket.emit('client-accepted', socket.name);
+		confirmUser(socket, `Player ${config.noPlayers}`);
 
 	} else if (type === 'host') {
 		setupHost(socket);
 	} else if (type === 'screen') {
-
-		socket.name = 'Screen';
-		socket.emit('client-accepted', socket.name);
-
+		confirmUser(socket, 'Screen');
 	} else {
 		socket.emit('err', 'Client type not recognised.');
 	}
