@@ -136,6 +136,39 @@ describe('Socket', function () {
 
 		});
 
+		it("checks 'new-user' event is broadcast", function () {
+
+			let clientOne = io.connect(`http://localhost:${PORT}`, options);
+			let clientTwo = io.connect(`http://localhost:${PORT}`, options);
+
+			clientOne.once('err', (msg) => {
+
+				clientOne.disconnect();
+				done(Error(msg));
+
+			});
+
+			clientTwo.once('err', (msg) => {
+
+				clientTwo.disconnect();
+				done(Error(msg));
+
+			});
+
+			clientOne.once('connect', () => {
+
+				clientTwo.once('connect', () => {
+					clientTwo.emit('type', 'player');
+				});
+
+			});
+
+			clientOne.once('new-user', () => {
+				done();
+			});
+
+		});
+
 	});
 
 });
