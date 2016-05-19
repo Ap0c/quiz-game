@@ -16,6 +16,20 @@ const options = {
 const PORT = 3000;
 
 
+// ----- Functions ----- //
+
+// Ends an async test, with or without err, and disconnects sockets.
+function endTest (sockets, done, err) {
+
+	for (let socket of sockets) {
+		socket.disconnect();
+	}
+
+	done(err ? Error(err) : null);
+
+}
+
+
 // ----- Tests ----- //
 
 describe('Socket', function () {
@@ -32,10 +46,7 @@ describe('Socket', function () {
 		let client = io.connect(`http://localhost:${PORT}`, options);
 
 		client.once('connect', () => {
-
-			client.disconnect();
-			done();
-
+			endTest([client], done);
 		});
 
 	});
@@ -47,10 +58,7 @@ describe('Socket', function () {
 			let client = io.connect(`http://localhost:${PORT}`, options);
 
 			client.once('err', (msg) => {
-
-				client.disconnect();
-				done(Error(msg));
-
+				endTest([client], done, msg);
 			});
 
 			client.once('client-accepted', () => {
@@ -58,10 +66,7 @@ describe('Socket', function () {
 				client.once('client-accepted', () => {
 
 					client.once('client-accepted', () => {
-
-						client.disconnect();
-						done();
-
+						endTest([client], done);
 					});
 
 				});				
@@ -83,17 +88,11 @@ describe('Socket', function () {
 			let client = io.connect(`http://localhost:${PORT}`, options);
 
 			client.once('err', (msg) => {
-
-				client.disconnect();
-				done();
-
+				endTest([client], done);
 			});
 
 			client.once('client-accepted', () => {
-
-				client.disconnect();
-				done(Error('The user is invalid, should not be accepted.'));
-
+				endTest([client], done, "User invalid, shouldn't be accepted.");
 			});
 
 			client.once('connect', () => {
@@ -107,24 +106,15 @@ describe('Socket', function () {
 			let client = io.connect(`http://localhost:${PORT}`, options);
 
 			client.once('err', (msg) => {
-
-				client.disconnect();
-				done(Error(msg));
-
+				endTest([client], done, msg);
 			});
 
 			client.once('client-accepted', () => {
-
-				client.disconnect();
-				done(Error('Two hosts not allowed.'));
-
+				endTest([client], done, 'Two hosts not allowed.');
 			});
 
 			client.once('host-exists', () => {
-
-				client.disconnect();
-				done();
-
+				endTest([client], done);
 			});
 
 			client.once('connect', () => {
@@ -142,19 +132,11 @@ describe('Socket', function () {
 			let clientTwo = io.connect(`http://localhost:${PORT}`, options);
 
 			clientOne.once('err', (msg) => {
-
-				clientOne.disconnect();
-				clientTwo.disconnect();
-				done(Error(msg));
-
+				endTest([clientOne, clientTwo], done, msg);
 			});
 
 			clientTwo.once('err', (msg) => {
-
-				clientOne.disconnect();
-				clientTwo.disconnect();
-				done(Error(msg));
-
+				endTest([clientOne, clientTwo], done, msg);
 			});
 
 			clientOne.once('connect', () => {
@@ -166,11 +148,7 @@ describe('Socket', function () {
 			});
 
 			clientOne.once('new-user', () => {
-
-				clientOne.disconnect();
-				clientTwo.disconnect();
-				done();
-
+				endTest([clientOne, clientTwo], done);
 			});
 
 		});
@@ -184,10 +162,7 @@ describe('Socket', function () {
 			let client = io.connect(`http://localhost:${PORT}`, options);
 
 			client.once('err', (msg) => {
-
-				client.disconnect();
-				done(Error(msg));
-
+				endTest([client], done, msg);
 			});
 
 			client.once('connect', () => {
@@ -195,17 +170,11 @@ describe('Socket', function () {
 			});
 
 			client.once('begin-fail', () => {
-
-				client.disconnect();
-				done();
-
+				endTest([client], done);
 			});
 
 			client.once('begin', () => {
-
-				client.disconnect();
-				done(Error('The game should not begin.'));
-
+				endTest([client], done, 'The game should not begin.');
 			});
 
 		});
