@@ -136,7 +136,7 @@ describe('Socket', function () {
 
 		});
 
-		it("checks 'new-user' event is broadcast", function () {
+		it("broadcasts a 'new-user' event", function (done) {
 
 			let clientOne = io.connect(`http://localhost:${PORT}`, options);
 			let clientTwo = io.connect(`http://localhost:${PORT}`, options);
@@ -144,12 +144,14 @@ describe('Socket', function () {
 			clientOne.once('err', (msg) => {
 
 				clientOne.disconnect();
+				clientTwo.disconnect();
 				done(Error(msg));
 
 			});
 
 			clientTwo.once('err', (msg) => {
 
+				clientOne.disconnect();
 				clientTwo.disconnect();
 				done(Error(msg));
 
@@ -164,7 +166,46 @@ describe('Socket', function () {
 			});
 
 			clientOne.once('new-user', () => {
+
+				clientOne.disconnect();
+				clientTwo.disconnect();
 				done();
+
+			});
+
+		});
+
+	});
+
+	describe('Begin Event', function () {
+
+		it('fails to begin when there are not enough users', function (done) {
+
+			let client = io.connect(`http://localhost:${PORT}`, options);
+
+			client.once('err', (msg) => {
+
+				client.disconnect();
+				done(Error(msg));
+
+			});
+
+			client.once('connect', () => {
+				client.emit('begin');
+			});
+
+			client.once('begin-fail', () => {
+
+				client.disconnect();
+				done();
+
+			});
+
+			client.once('begin', () => {
+
+				client.disconnect();
+				done(Error('The game should not begin.'));
+
 			});
 
 		});

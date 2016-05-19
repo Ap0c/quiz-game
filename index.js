@@ -56,7 +56,7 @@ function correctUsers (socket) {
 // Attempts to begin the game.
 function begin (socket) {
 
-	if (correctUsers) {
+	if (correctUsers(socket)) {
 		io.emit('begin');
 	}
 
@@ -131,20 +131,17 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
 
-	console.log('A client connected.');
-
 	socket.on('disconnect', () => {
-
-		console.log('A client disconnected.');
 		handleDisconnect(socket);
-
 	});
 
 	socket.on('type', (type) => {
 		socketType(socket, type);
 	});
 
-	socket.on('begin', begin);
+	socket.on('begin', () => {
+		begin(socket);
+	});
 
 });
 
