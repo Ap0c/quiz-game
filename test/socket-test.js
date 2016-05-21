@@ -74,6 +74,27 @@ describe('Socket', function () {
 
 	});
 
+	it('sends a disconnect event when user is lost', function (done) {
+
+		let clientOne = io.connect(`http://localhost:${port}`, options);
+		let clientTwo = io.connect(`http://localhost:${port}`, options);
+
+		handleErr([clientOne, clientTwo], done);
+
+		clientOne.once('connect', () => {
+			clientOne.emit('add-user', 'host');
+		});
+
+		clientOne.once('client-accepted', () => {
+			clientOne.disconnect();
+		});
+
+		clientTwo.once('client-disconnect', (name) => {
+			endTest([clientOne, clientTwo], done);
+		});
+
+	});
+
 	describe('Add User Events', function () {
 
 		it("handles a 'add-user' event for correct user", function (done) {
