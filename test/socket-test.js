@@ -257,6 +257,59 @@ describe('Socket', function () {
 
 		});
 
+		it('fails begins when the users are correct', function (done) {
+
+			let clientOne = io.connect(`http://localhost:${port}`, options);
+			let clientTwo = io.connect(`http://localhost:${port}`, options);
+			let clientThree = io.connect(`http://localhost:${port}`, options);
+			let clientFour = io.connect(`http://localhost:${port}`, options);
+
+			let clientSockets = [clientOne, clientTwo, clientThree, clientFour];
+
+			handleErr(clientSockets, done);
+
+			clientOne.once('connect', () => {
+				clientOne.emit('type', 'host');
+			});
+
+			clientTwo.once('connect', () => {
+				clientTwo.emit('type', 'screen');
+			});
+
+			clientThree.once('connect', () => {
+				clientThree.emit('type', 'player');
+			});
+
+			clientFour.once('connect', () => {
+				clientFour.emit('type', 'player');
+			});
+
+			clientOne.once('client-accepted', () => {
+
+				clientTwo.once('client-accepted', () => {
+
+					clientThree.once('client-accepted', () => {
+
+						clientFour.once('client-accepted', () => {
+							clientOne.emit('begin');
+						});
+
+					});
+
+				});
+				
+			});
+
+			clientOne.once('begin-fail', () => {
+				endTest(clientSockets, done, 'The game should begin.');
+			});
+
+			clientOne.once('begin', () => {
+				endTest(clientSockets, done);
+			});
+
+		});
+
 	});
 
 });
