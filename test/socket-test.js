@@ -4,7 +4,7 @@
 
 let expect = require('chai').expect;
 let io = require('socket.io-client');
-let app = require('../index');
+let app = require('../lib/app');
 
 
 // ----- Setup ----- //
@@ -191,7 +191,7 @@ describe('Socket', function () {
 				endTest([client], done);
 			});
 
-			client.once('begin', () => {
+			client.once('category-view', () => {
 				endTest([client], done, 'The game should not begin.');
 			});
 
@@ -215,7 +215,7 @@ describe('Socket', function () {
 				endTest([client], done);
 			});
 
-			client.once('begin', () => {
+			client.once('category-view', () => {
 				endTest([client], done, 'The game should not begin.');
 			});
 
@@ -248,7 +248,7 @@ describe('Socket', function () {
 				endTest([clientOne, clientTwo], done);
 			});
 
-			clientOne.once('begin', () => {
+			clientOne.once('category-view', () => {
 
 				endTest([clientOne, clientTwo], done,
 					'The game should not begin.');
@@ -304,7 +304,7 @@ describe('Socket', function () {
 				endTest(clientSockets, done, 'The game should begin.');
 			});
 
-			clientOne.once('begin', () => {
+			clientOne.once('category-view', () => {
 				endTest(clientSockets, done);
 			});
 
