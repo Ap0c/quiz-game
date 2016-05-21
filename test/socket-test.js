@@ -4,6 +4,7 @@
 
 let expect = require('chai').expect;
 let io = require('socket.io-client');
+let app = require('../index');
 
 
 // ----- Setup ----- //
@@ -13,7 +14,7 @@ const options = {
 	'force new connection': true
 };
 
-const PORT = 3000;
+let port = 3001;
 
 
 // ----- Functions ----- //
@@ -34,16 +35,22 @@ function endTest (sockets, done, err) {
 
 describe('Socket', function () {
 
-	beforeEach(function (done) {
+	let server = null;
 
-		require('../index');
-		done();
+	beforeEach(function () {
+		server = app(port);
+	});
+
+	afterEach(function () {
+
+		server.close();
+		port++;
 
 	});
 
 	it('accepts a connection', function (done) {
 
-		let client = io.connect(`http://localhost:${PORT}`, options);
+		let client = io.connect(`http://localhost:${port}`, options);
 
 		client.once('connect', () => {
 			endTest([client], done);
@@ -55,7 +62,7 @@ describe('Socket', function () {
 
 		it("handles a 'type' event for correct user", function (done) {
 
-			let client = io.connect(`http://localhost:${PORT}`, options);
+			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
@@ -85,7 +92,7 @@ describe('Socket', function () {
 
 		it("handles a 'type' event for an invalid user", function (done) {
 
-			let client = io.connect(`http://localhost:${PORT}`, options);
+			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done);
@@ -103,14 +110,20 @@ describe('Socket', function () {
 
 		it('handles duplicate hosts', function (done) {
 
-			let client = io.connect(`http://localhost:${PORT}`, options);
+			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
 			});
 
 			client.once('client-accepted', () => {
-				endTest([client], done, 'Two hosts not allowed.');
+
+				client.emit('type', 'host');
+
+				client.once('client-accepted', () => {
+					endTest([client], done, 'Two hosts not allowed.');
+				});
+
 			});
 
 			client.once('host-exists', () => {
@@ -118,18 +131,15 @@ describe('Socket', function () {
 			});
 
 			client.once('connect', () => {
-
 				client.emit('type', 'host');
-				client.emit('type', 'host');
-
 			});
 
 		});
 
 		it("broadcasts a 'new-user' event", function (done) {
 
-			let clientOne = io.connect(`http://localhost:${PORT}`, options);
-			let clientTwo = io.connect(`http://localhost:${PORT}`, options);
+			let clientOne = io.connect(`http://localhost:${port}`, options);
+			let clientTwo = io.connect(`http://localhost:${port}`, options);
 
 			clientOne.once('err', (msg) => {
 				endTest([clientOne, clientTwo], done, msg);
@@ -157,15 +167,41 @@ describe('Socket', function () {
 
 	describe('Begin Event', function () {
 
-		it('fails to begin when there are not enough users', function (done) {
+		it('fails to begin when there is no host', function (done) {
 
-			let client = io.connect(`http://localhost:${PORT}`, options);
+			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
 			});
 
 			client.once('connect', () => {
+				client.emit('begin');
+			});
+
+			client.once('begin-fail', () => {
+				endTest([client], done);
+			});
+
+			client.once('begin', () => {
+				endTest([client], done, 'The game should not begin.');
+			});
+
+		});
+
+		it('fails to begin when there is no screen', function (done) {
+
+			let client = io.connect(`http://localhost:${port}`, options);
+
+			client.once('err', (msg) => {
+				endTest([client], done, msg);
+			});
+
+			client.once('connect', () => {
+				client.emit('type', 'host');
+			});
+
+			client.once('client-accepted', () => {
 				client.emit('begin');
 			});
 

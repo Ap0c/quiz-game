@@ -4,7 +4,7 @@
 
 let expect = require('chai').expect;
 let request = require('supertest');
-let server = require('../index');
+let server = require('../index')(3000);
 
 
 // ----- Tests ----- //
