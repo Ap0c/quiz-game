@@ -74,9 +74,9 @@ describe('Socket', function () {
 
 	});
 
-	describe('Type Events', function () {
+	describe('Add User Events', function () {
 
-		it("handles a 'type' event for correct user", function (done) {
+		it("handles a 'add-user' event for correct user", function (done) {
 
 			let client = io.connect(`http://localhost:${port}`, options);
 
@@ -96,15 +96,15 @@ describe('Socket', function () {
 
 			client.once('connect', () => {
 
-				client.emit('type', 'host');
-				client.emit('type', 'player');
-				client.emit('type', 'screen');
+				client.emit('add-user', 'host');
+				client.emit('add-user', 'player');
+				client.emit('add-user', 'screen');
 
 			});
 
 		});
 
-		it("handles a 'type' event for an invalid user", function (done) {
+		it("handles a 'add-user' event for an invalid user", function (done) {
 
 			let client = io.connect(`http://localhost:${port}`, options);
 
@@ -117,7 +117,7 @@ describe('Socket', function () {
 			});
 
 			client.once('connect', () => {
-				client.emit('type', 'invalid');
+				client.emit('add-user', 'invalid');
 			});
 
 		});
@@ -130,7 +130,7 @@ describe('Socket', function () {
 
 			client.once('client-accepted', () => {
 
-				client.emit('type', 'host');
+				client.emit('add-user', 'host');
 
 				client.once('client-accepted', () => {
 					endTest([client], done, 'Two hosts not allowed.');
@@ -143,7 +143,7 @@ describe('Socket', function () {
 			});
 
 			client.once('connect', () => {
-				client.emit('type', 'host');
+				client.emit('add-user', 'host');
 			});
 
 		});
@@ -162,7 +162,7 @@ describe('Socket', function () {
 			clientOne.once('connect', () => {
 
 				clientTwo.once('connect', () => {
-					clientTwo.emit('type', 'player');
+					clientTwo.emit('add-user', 'player');
 				});
 
 			});
@@ -204,7 +204,7 @@ describe('Socket', function () {
 			handleErr([client], done);
 
 			client.once('connect', () => {
-				client.emit('type', 'host');
+				client.emit('add-user', 'host');
 			});
 
 			client.once('client-accepted', () => {
@@ -229,11 +229,11 @@ describe('Socket', function () {
 			handleErr([clientOne, clientTwo], done);
 
 			clientOne.once('connect', () => {
-				clientOne.emit('type', 'host');
+				clientOne.emit('add-user', 'host');
 			});
 
 			clientTwo.once('connect', () => {
-				clientTwo.emit('type', 'screen');
+				clientTwo.emit('add-user', 'screen');
 			});
 
 			clientOne.once('client-accepted', () => {
@@ -269,19 +269,19 @@ describe('Socket', function () {
 			handleErr(clientSockets, done);
 
 			clientOne.once('connect', () => {
-				clientOne.emit('type', 'host');
+				clientOne.emit('add-user', 'host');
 			});
 
 			clientTwo.once('connect', () => {
-				clientTwo.emit('type', 'screen');
+				clientTwo.emit('add-user', 'screen');
 			});
 
 			clientThree.once('connect', () => {
-				clientThree.emit('type', 'player');
+				clientThree.emit('add-user', 'player');
 			});
 
 			clientFour.once('connect', () => {
-				clientFour.emit('type', 'player');
+				clientFour.emit('add-user', 'player');
 			});
 
 			clientOne.once('client-accepted', () => {
