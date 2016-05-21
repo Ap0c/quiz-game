@@ -30,6 +30,19 @@ function endTest (sockets, done, err) {
 
 }
 
+// Catches socket error messages and ends test.
+function handleErr (sockets, done) {
+
+	for (let socket of sockets) {
+
+		socket.once('err', (msg) => {
+			endTest(sockets, done, msg);
+		});
+
+	}
+
+}
+
 
 // ----- Tests ----- //
 
@@ -53,6 +66,8 @@ describe('Socket', function () {
 
 		let client = io.connect(`http://localhost:${port}`, options);
 
+		handleErr([client], done);
+
 		client.once('connect', () => {
 			endTest([client], done);
 		});
@@ -65,9 +80,7 @@ describe('Socket', function () {
 
 			let client = io.connect(`http://localhost:${port}`, options);
 
-			client.once('err', (msg) => {
-				endTest([client], done, msg);
-			});
+			handleErr([client], done);
 
 			client.once('client-accepted', () => {
 
@@ -113,9 +126,7 @@ describe('Socket', function () {
 
 			let client = io.connect(`http://localhost:${port}`, options);
 
-			client.once('err', (msg) => {
-				endTest([client], done, msg);
-			});
+			handleErr([client], done);
 
 			client.once('client-accepted', () => {
 
@@ -142,9 +153,7 @@ describe('Socket', function () {
 			let clientOne = io.connect(`http://localhost:${port}`, options);
 			let clientTwo = io.connect(`http://localhost:${port}`, options);
 
-			clientOne.once('err', (msg) => {
-				endTest([clientOne, clientTwo], done, msg);
-			});
+			handleErr([clientOne, clientTwo], done);
 
 			clientTwo.once('err', (msg) => {
 				endTest([clientOne, clientTwo], done, msg);
@@ -172,9 +181,7 @@ describe('Socket', function () {
 
 			let client = io.connect(`http://localhost:${port}`, options);
 
-			client.once('err', (msg) => {
-				endTest([client], done, msg);
-			});
+			handleErr([client], done);
 
 			client.once('connect', () => {
 				client.emit('begin');
@@ -194,9 +201,7 @@ describe('Socket', function () {
 
 			let client = io.connect(`http://localhost:${port}`, options);
 
-			client.once('err', (msg) => {
-				endTest([client], done, msg);
-			});
+			handleErr([client], done);
 
 			client.once('connect', () => {
 				client.emit('type', 'host');
@@ -221,13 +226,7 @@ describe('Socket', function () {
 			let clientOne = io.connect(`http://localhost:${port}`, options);
 			let clientTwo = io.connect(`http://localhost:${port}`, options);
 
-			clientOne.once('err', (msg) => {
-				endTest([clientOne, clientTwo], done, msg);
-			});
-
-			clientTwo.once('err', (msg) => {
-				endTest([clientOne, clientTwo], done, msg);
-			});
+			handleErr([clientOne, clientTwo], done);
 
 			clientOne.once('connect', () => {
 				clientOne.emit('type', 'host');
