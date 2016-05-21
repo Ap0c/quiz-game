@@ -36,9 +36,13 @@ function endTest (sockets, done, err) {
 describe('Socket', function () {
 
 	let server = null;
+	let client = null;
 
 	beforeEach(function () {
+
+		client = io.connect(`http://localhost:${port}`, options);
 		server = app(port);
+
 	});
 
 	afterEach(function () {
@@ -50,8 +54,6 @@ describe('Socket', function () {
 
 	it('accepts a connection', function (done) {
 
-		let client = io.connect(`http://localhost:${port}`, options);
-
 		client.once('connect', () => {
 			endTest([client], done);
 		});
@@ -62,7 +64,6 @@ describe('Socket', function () {
 
 		it("handles a 'type' event for correct user", function (done) {
 
-			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
@@ -92,8 +93,6 @@ describe('Socket', function () {
 
 		it("handles a 'type' event for an invalid user", function (done) {
 
-			let client = io.connect(`http://localhost:${port}`, options);
-
 			client.once('err', (msg) => {
 				endTest([client], done);
 			});
@@ -109,8 +108,6 @@ describe('Socket', function () {
 		});
 
 		it('handles duplicate hosts', function (done) {
-
-			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
@@ -169,8 +166,6 @@ describe('Socket', function () {
 
 		it('fails to begin when there is no host', function (done) {
 
-			let client = io.connect(`http://localhost:${port}`, options);
-
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
 			});
@@ -190,8 +185,6 @@ describe('Socket', function () {
 		});
 
 		it('fails to begin when there is no screen', function (done) {
-
-			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
