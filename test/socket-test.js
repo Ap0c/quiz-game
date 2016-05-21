@@ -39,10 +39,7 @@ describe('Socket', function () {
 	let client = null;
 
 	beforeEach(function () {
-
-		client = io.connect(`http://localhost:${port}`, options);
 		server = app(port);
-
 	});
 
 	afterEach(function () {
@@ -54,6 +51,8 @@ describe('Socket', function () {
 
 	it('accepts a connection', function (done) {
 
+		let client = io.connect(`http://localhost:${port}`, options);
+
 		client.once('connect', () => {
 			endTest([client], done);
 		});
@@ -64,6 +63,7 @@ describe('Socket', function () {
 
 		it("handles a 'type' event for correct user", function (done) {
 
+			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
@@ -93,6 +93,8 @@ describe('Socket', function () {
 
 		it("handles a 'type' event for an invalid user", function (done) {
 
+			let client = io.connect(`http://localhost:${port}`, options);
+
 			client.once('err', (msg) => {
 				endTest([client], done);
 			});
@@ -108,6 +110,8 @@ describe('Socket', function () {
 		});
 
 		it('handles duplicate hosts', function (done) {
+
+			let client = io.connect(`http://localhost:${port}`, options);
 
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
@@ -166,6 +170,8 @@ describe('Socket', function () {
 
 		it('fails to begin when there is no host', function (done) {
 
+			let client = io.connect(`http://localhost:${port}`, options);
+
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
 			});
@@ -186,6 +192,8 @@ describe('Socket', function () {
 
 		it('fails to begin when there is no screen', function (done) {
 
+			let client = io.connect(`http://localhost:${port}`, options);
+
 			client.once('err', (msg) => {
 				endTest([client], done, msg);
 			});
@@ -204,6 +212,48 @@ describe('Socket', function () {
 
 			client.once('begin', () => {
 				endTest([client], done, 'The game should not begin.');
+			});
+
+		});
+
+		it('fails to begin when there are not enough players', function (done) {
+
+			let clientOne = io.connect(`http://localhost:${port}`, options);
+			let clientTwo = io.connect(`http://localhost:${port}`, options);
+
+			clientOne.once('err', (msg) => {
+				endTest([clientOne, clientTwo], done, msg);
+			});
+
+			clientTwo.once('err', (msg) => {
+				endTest([clientOne, clientTwo], done, msg);
+			});
+
+			clientOne.once('connect', () => {
+				clientOne.emit('type', 'host');
+			});
+
+			clientTwo.once('connect', () => {
+				clientTwo.emit('type', 'screen');
+			});
+
+			clientOne.once('client-accepted', () => {
+
+				clientTwo.once('client-accepted', () => {
+					clientOne.emit('begin');
+				});
+				
+			});
+
+			clientOne.once('begin-fail', () => {
+				endTest([clientOne, clientTwo], done);
+			});
+
+			clientOne.once('begin', () => {
+
+				endTest([clientOne, clientTwo], done,
+					'The game should not begin.');
+
 			});
 
 		});
