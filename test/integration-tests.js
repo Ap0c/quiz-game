@@ -461,6 +461,30 @@ describe('Integration', function () {
 
 		});
 
+		it('sends the command for answer view', function (done) {
+
+			let client = io.connect(`http://localhost:${port}`, options);
+			const expAnswers = [{ user: 'Player 1', answer: 'dummy answer' }];
+
+			handleErr([client], done);
+
+			client.once('connect', () => {
+				client.emit('add-user', 'player');
+			});
+
+			client.once('client-accepted', () => {
+				client.emit('submit', 'dummy answer');
+			});
+
+			client.once('answers-view', (answers) => {
+
+				expect(answers).to.eql(expAnswers);
+				endTest([client], done);
+
+			});
+
+		});
+
 	});
 
 });
