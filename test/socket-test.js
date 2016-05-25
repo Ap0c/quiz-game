@@ -333,4 +333,34 @@ describe('Socket', function () {
 
 	});
 
+	describe('Category Events', function () {
+
+		it('receives a category choice and confirms it', function (done) {
+
+			let clientOne = io.connect(`http://localhost:${port}`, options);
+			let clientTwo = io.connect(`http://localhost:${port}`, options);
+
+			let catChoice = 'catOne';
+
+			handleErr([clientOne, clientTwo], done);
+
+			clientOne.once('connect', () => {
+				clientOne.emit('category-chosen', catChoice);
+			});
+
+			clientTwo.once('connect', () => {
+
+				clientTwo.once('start-category', (category) => {
+
+					expect(category).to.equal(catChoice);
+					done();
+
+				});
+
+			});
+
+		});
+
+	});
+
 });
