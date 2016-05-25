@@ -353,10 +353,28 @@ describe('Socket', function () {
 				clientTwo.once('start-category', (category) => {
 
 					expect(category).to.equal(catChoice);
-					done();
+					endTest([clientOne, clientTwo], done);
 
 				});
 
+			});
+
+		});
+
+		it('handles an incorrect category choice', function (done) {
+
+			let client = io.connect(`http://localhost:${port}`, options);
+
+			client.once('err', (msg) => {
+				endTest([client], done);
+			});
+
+			client.once('connect', () => {
+				client.emit('category-chosen', 'invalid');
+			});
+
+			client.once('start-category', (category) => {
+				endTest([client], done, 'Category is invalid.');
 			});
 
 		});
