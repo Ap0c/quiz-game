@@ -424,4 +424,43 @@ describe('Integration', function () {
 
 	});
 
+	describe('Answer Events', function () {
+
+		it('broadcasts message that an answer has been submitted', function (done) {
+
+			let clientOne = io.connect(`http://localhost:${port}`, options);
+			let clientTwo = io.connect(`http://localhost:${port}`, options);
+
+			handleErr([clientOne, clientTwo], done);
+
+			clientOne.once('connect', () => {
+
+				clientTwo.once('connect', () => {
+
+					clientOne.emit('add-user', 'player');
+					clientTwo.emit('add-user', 'player');
+
+				});
+
+			});
+
+			clientOne.once('client-accepted', () => {
+
+				clientTwo.once('client-accepted', () => {
+					clientOne.emit('submit', 'dummy answer');
+				});
+
+			});
+
+			clientTwo.once('answer-submitted', (user) => {
+
+				expect(user).to.equal('Player 1');
+				endTest([clientOne, clientTwo], done);
+
+			});
+
+		});
+
+	});
+
 });
