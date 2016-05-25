@@ -46,7 +46,7 @@ function handleErr (sockets, done) {
 
 // ----- Tests ----- //
 
-describe('Socket', function () {
+describe('Integration', function () {
 
 	let server = null;
 	let client = null;
@@ -375,6 +375,26 @@ describe('Socket', function () {
 
 			client.once('show-category', (category) => {
 				endTest([client], done, 'Category is invalid.');
+			});
+
+		});
+
+	});
+
+	describe('Question Events', function () {
+
+		it('sends a new question to the users', function (done) {
+
+			let client = io.connect(`http://localhost:${port}`, options);
+
+			handleErr([client], done);
+
+			client.once('connect', () => {
+				client.emit('new-question');
+			});
+
+			client.once('question-view', () => {
+				endTest([client], done);
 			});
 
 		});
