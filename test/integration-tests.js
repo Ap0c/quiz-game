@@ -399,6 +399,29 @@ describe('Integration', function () {
 
 		});
 
+		it('tells clients to display scores after questions', function (done) {
+
+			let client = io.connect(`http://localhost:${port}`, options);
+
+			handleErr([client], done);
+
+			client.once('connect', () => {
+
+				client.emit('new-question');
+				client.emit('new-question');
+				client.emit('new-question');
+				client.emit('new-question');
+				client.emit('new-question');
+				client.emit('new-question');
+
+			});
+
+			client.once('scores-view', () => {
+				endTest([client], done);
+			});
+
+		});
+
 	});
 
 });
