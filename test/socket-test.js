@@ -350,7 +350,7 @@ describe('Socket', function () {
 
 			clientTwo.once('connect', () => {
 
-				clientTwo.once('start-category', (category) => {
+				clientTwo.once('show-category', (category) => {
 
 					expect(category).to.equal(catChoice);
 					endTest([clientOne, clientTwo], done);
@@ -373,7 +373,7 @@ describe('Socket', function () {
 				client.emit('category-chosen', 'invalid');
 			});
 
-			client.once('start-category', (category) => {
+			client.once('show-category', (category) => {
 				endTest([client], done, 'Category is invalid.');
 			});
 
