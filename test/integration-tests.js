@@ -390,7 +390,7 @@ describe('Integration', function () {
 			handleErr([client], done);
 
 			client.once('connect', () => {
-				client.emit('start-round', 'catOne');
+				client.emit('start-round');
 			});
 
 			client.once('question-view', () => {
@@ -472,12 +472,12 @@ describe('Integration', function () {
 
 			client.once('connect', () => {
 
-				client.emit('start-round', 'catOne');
-				client.emit('scored', { category: 'catOne' });
-				client.emit('scored', { category: 'catOne' });
-				client.emit('scored', { category: 'catOne' });
-				client.emit('scored', { category: 'catOne' });
-				client.emit('scored', { category: 'catOne' });
+				client.emit('start-round');
+				client.emit('scored');
+				client.emit('scored');
+				client.emit('scored');
+				client.emit('scored');
+				client.emit('scored');
 
 			});
 
@@ -505,12 +505,9 @@ describe('Integration', function () {
 			client.once('answers-view', (answers) => {
 
 				user = answers[0].user;
-				let scores = {
-					category: 'catOne',
-					scores: [{ user: user.id, value: 2 }]
-				};
+				let scores = [{ user: user.id, value: 2 }];
 
-				client.emit('start-round', 'catOne');
+				client.emit('start-round');
 				client.emit('scored', scores);
 				client.emit('scored', scores);
 				client.emit('scored', scores);
