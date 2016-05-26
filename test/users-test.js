@@ -8,6 +8,7 @@ let Users = require('../lib/users');
 
 // ----- Mockups ----- //
 
+// Creates a mocked socket with interface required for tests to pass.
 function MockSocket (id) {
 
 	return {
