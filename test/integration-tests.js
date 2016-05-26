@@ -390,7 +390,7 @@ describe('Integration', function () {
 			handleErr([client], done);
 
 			client.once('connect', () => {
-				client.emit('scored', { category: 'catOne' });
+				client.emit('start-round', 'catOne');
 			});
 
 			client.once('question-view', () => {
@@ -472,7 +472,7 @@ describe('Integration', function () {
 
 			client.once('connect', () => {
 
-				client.emit('scored', { category: 'catOne' });
+				client.emit('start-round', 'catOne');
 				client.emit('scored', { category: 'catOne' });
 				client.emit('scored', { category: 'catOne' });
 				client.emit('scored', { category: 'catOne' });
@@ -483,6 +483,47 @@ describe('Integration', function () {
 
 			client.once('scores-view', () => {
 				endTest([client], done);
+			});
+
+		});
+
+		it('updates scores', function (done) {
+
+			let client = io.connect(`http://localhost:${port}`, options);
+			let user = null;
+
+			handleErr([client], done);
+
+			client.once('connect', () => {
+				client.emit('add-user', 'player');
+			});
+
+			client.once('client-accepted', () => {
+				client.emit('submit', 'dummy answer');
+			});
+
+			client.once('answers-view', (answers) => {
+
+				user = answers[0].user;
+				let scores = {
+					category: 'catOne',
+					scores: [{ user: user.id, value: 2 }]
+				};
+
+				client.emit('start-round', 'catOne');
+				client.emit('scored', scores);
+				client.emit('scored', scores);
+				client.emit('scored', scores);
+				client.emit('scored', scores);
+				client.emit('scored', scores);
+
+			});
+
+			client.once('scores-view', (scores) => {
+
+				expect(scores).to.eql([{ user: user.name, score: 10 }]);
+				endTest([client], done);
+
 			});
 
 		});
