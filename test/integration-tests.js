@@ -464,7 +464,8 @@ describe('Integration', function () {
 		it('sends the command for answer view', function (done) {
 
 			let client = io.connect(`http://localhost:${port}`, options);
-			const expAnswers = [{ user: 'Player 1', answer: 'dummy answer' }];
+			const expAnswer = 'dummy answer';
+			const expName = 'Player 1';
 
 			handleErr([client], done);
 
@@ -478,7 +479,8 @@ describe('Integration', function () {
 
 			client.once('answers-view', (answers) => {
 
-				expect(answers).to.eql(expAnswers);
+				expect(answers[0].answer).to.equal(expAnswer);
+				expect(answers[0].user.name).to.equal(expName);
 				endTest([client], done);
 
 			});
