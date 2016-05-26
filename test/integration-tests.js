@@ -424,7 +424,7 @@ describe('Integration', function () {
 			clientOne.once('client-accepted', () => {
 
 				clientTwo.once('client-accepted', () => {
-					clientOne.emit('submit', 'dummy answer');
+					clientOne.emit('submit-answer', 'dummy answer');
 				});
 
 			});
@@ -451,7 +451,7 @@ describe('Integration', function () {
 			});
 
 			client.once('client-accepted', () => {
-				client.emit('submit', 'dummy answer');
+				client.emit('submit-answer', 'dummy answer');
 			});
 
 			client.once('answers-view', (answers) => {
@@ -499,7 +499,7 @@ describe('Integration', function () {
 			});
 
 			client.once('client-accepted', () => {
-				client.emit('submit', 'dummy answer');
+				client.emit('submit-answer', 'dummy answer');
 			});
 
 			client.once('answers-view', (answers) => {
