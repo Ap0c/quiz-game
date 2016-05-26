@@ -390,33 +390,10 @@ describe('Integration', function () {
 			handleErr([client], done);
 
 			client.once('connect', () => {
-				client.emit('new-question');
+				client.emit('scored', { category: 'catOne' });
 			});
 
 			client.once('question-view', () => {
-				endTest([client], done);
-			});
-
-		});
-
-		it('tells clients to display scores after questions', function (done) {
-
-			let client = io.connect(`http://localhost:${port}`, options);
-
-			handleErr([client], done);
-
-			client.once('connect', () => {
-
-				client.emit('new-question');
-				client.emit('new-question');
-				client.emit('new-question');
-				client.emit('new-question');
-				client.emit('new-question');
-				client.emit('new-question');
-
-			});
-
-			client.once('scores-view', () => {
 				endTest([client], done);
 			});
 
@@ -483,6 +460,29 @@ describe('Integration', function () {
 				expect(answers[0].user.name).to.equal(expName);
 				endTest([client], done);
 
+			});
+
+		});
+
+		it('tells clients to display scores after questions', function (done) {
+
+			let client = io.connect(`http://localhost:${port}`, options);
+
+			handleErr([client], done);
+
+			client.once('connect', () => {
+
+				client.emit('scored', { category: 'catOne' });
+				client.emit('scored', { category: 'catOne' });
+				client.emit('scored', { category: 'catOne' });
+				client.emit('scored', { category: 'catOne' });
+				client.emit('scored', { category: 'catOne' });
+				client.emit('scored', { category: 'catOne' });
+
+			});
+
+			client.once('scores-view', () => {
+				endTest([client], done);
 			});
 
 		});
