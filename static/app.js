@@ -5,17 +5,28 @@ var socket = io();
 
 // ----- Models ----- //
 
-var User = function User (name) {
+// Constructor for the user.
+var user = (function User () {
 
-	socket.emit('add-user', name);
+	// ----- Properties ----- //
+
+	var type = null;
+
+	// ----- Functions ----- //
+
+	// Sets the user to a given type.
+	function setUser (userType) {
+
+		socket.emit('add-user', userType);
+		type = userType;
+
+	}
 
 	return {
-		name: name
+		set: setUser
 	};
 
-};
-
-var user = null;
+})();
 
 
 // ----- User Choice Component ----- //
@@ -24,13 +35,13 @@ var chooseUser = {};
 
 chooseUser.controller = function () {
 
-	// Creates a new user with a given name.
-	function createUser (name) {
-		user = User(name);
+	// Sets the user to a given type
+	function setUser (type) {
+		user.set(type);
 	}
 
 	return {
-		user: createUser
+		user: setUser
 	};
 
 };
