@@ -4,3 +4,4 @@ node_modules/*
 jshint.json
 *.log
 coverage/*
+static/mithril*

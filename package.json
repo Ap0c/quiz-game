@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
+    "build": "cp node_modules/mithril/mithril.min.js static/",
     "start": "node index.js",
     "report": "open coverage/lcov-report/index.html"
   },
@@ -12,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.13.4",
+    "mithril": "^0.2.5",
     "socket.io": "^1.4.6"
   },
   "devDependencies": {
