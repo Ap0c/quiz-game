@@ -3,6 +3,12 @@
 var socket = io();
 
 
+// ----- Setup ----- //
+
+var main = document.getElementsByTagName('main')[0];
+var header = document.getElementsByTagName('header')[0];
+
+
 // ----- Models ----- //
 
 // Constructor for the user.
@@ -25,21 +31,24 @@ var user = (function User () {
 
 	// ----- Constructor ----- //
 
-	// Saves the user's name when they are accepted.
-	socket.on('client-accepted', function (userName) {
-
-		m.startComputation();
-		name(userName);
-		m.endComputation();
-
-	});
-
 	return {
 		set: setUser,
 		name: name
 	};
 
 })();
+
+
+// ----- Socket Events ----- //
+
+// Saves the user's name when they are accepted.
+socket.on('client-accepted', function (userName) {
+
+	m.startComputation();
+	user.name(userName);
+	m.endComputation();
+
+});
 
 
 // ----- User Choice Component ----- //
@@ -75,15 +84,17 @@ chooseUser.view = function (ctrl) {
 
 };
 
-m.mount(document.getElementsByTagName('main')[0], chooseUser);
 
 // ----- Header Component ----- //
 
-var header = {
-	controller: function () {},
+var head = {
 	view: function (ctrl) {
 		return user.name();
 	}
 };
 
-m.mount(document.getElementsByTagName('header')[0], header);
+
+// ----- Default Components ----- //
+
+m.mount(main, chooseUser);
+m.mount(header, head);
