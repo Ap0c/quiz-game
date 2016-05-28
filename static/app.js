@@ -16,7 +16,7 @@ var user = (function User () {
 
 	// ----- Properties ----- //
 
-	var type = null;
+	var type = m.prop();
 	var name = m.prop();
 
 	// ----- Functions ----- //
@@ -25,7 +25,7 @@ var user = (function User () {
 	function setUser (userType) {
 
 		socket.emit('add-user', userType);
-		type = userType;
+		type(userType);
 
 	}
 
@@ -33,10 +33,92 @@ var user = (function User () {
 
 	return {
 		set: setUser,
-		name: name
+		name: name,
+		type: type
 	};
 
 })();
+
+
+// ----- Components ----- //
+
+// The page header.
+var head = {
+	view: function (ctrl) {
+		return user.name();
+	}
+};
+
+// The user type choice screen.
+var chooseUser = {
+
+	controller: function () {
+
+		// Sets the user to a given type
+		function setUser (type) {
+			user.set(type);
+		}
+
+		return {
+			user: setUser
+		};
+
+	},
+
+	view: function (ctrl) {
+
+		return [
+			m('button.choose-player', {
+				onclick: function () { ctrl.user('player'); }
+			}, 'Player'),
+			m('button.choose-host', {
+				onclick: function () { ctrl.user('host'); }
+			}, 'Host'),
+			m('button.choose-screen', {
+				onclick: function () { ctrl.user('screen'); }
+			}, 'Screen')
+		];
+
+	}
+
+};
+
+var chooseCategory = {
+
+	controller: function (args) {
+
+		// Determines what part of the category view this user is displaying.
+		function displayType () {
+			return user.type();
+		}
+
+		return {
+			displayType: displayType
+		};
+
+	},
+
+	view: function (ctrl, args) {
+
+		if (ctrl.displayType === 'host') {
+
+			return args.categories.map(function (category) {
+				return m('button', category);
+			});
+
+		} else if (ctrl.displayType === 'screen') {
+
+			return m('ul', args.categories.map(function (category) {
+				return m('li', category);
+			}));
+
+		} else {
+			return m('', 'Category being chosen...');
+		}
+
+	}
+
+};
 
 
 // ----- Socket Events ----- //
@@ -50,48 +132,10 @@ socket.on('client-accepted', function (userName) {
 
 });
 
-
-// ----- User Choice Component ----- //
-
-var chooseUser = {};
-
-chooseUser.controller = function () {
-
-	// Sets the user to a given type
-	function setUser (type) {
-		user.set(type);
-	}
-
-	return {
-		user: setUser
-	};
-
-};
-
-chooseUser.view = function (ctrl) {
-
-	return [
-		m('button.choose-player', {
-			onclick: function () { ctrl.user('player'); }
-		}, 'Player'),
-		m('button.choose-host', {
-			onclick: function () { ctrl.user('host'); }
-		}, 'Host'),
-		m('button.choose-screen', {
-			onclick: function () { ctrl.user('screen'); }
-		}, 'Screen')
-	];
-
-};
-
-
-// ----- Header Component ----- //
-
-var head = {
-	view: function (ctrl) {
-		return user.name();
-	}
-};
+// Mounts the category view.
+socket.on('category-view', function (categories) {
+	m.mount(main, chooseCategory, { categories: categories });
+});
 
 
 // ----- Default Components ----- //
