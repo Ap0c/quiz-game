@@ -39,6 +39,9 @@ var user = (function User () {
 
 })();
 
+// List of users.
+var users = m.prop([]);
+
 
 // ----- Components ----- //
 
@@ -83,6 +86,41 @@ var chooseUser = {
 
 };
 
+var gatheringPlayers = {
+
+	controller: function (args) {
+
+		// Determines what part of the view to display.
+		function displayType () {
+			return user.type();
+		}
+
+		return {
+			displayType: displayType
+		};
+
+	},
+
+	view: function (ctrl) {
+
+		var view = ['Gathering Players...'];
+
+		if (ctrl.displayType() === 'host') {
+			view.push(m('button.begin', 'Begin'));
+		} else if (ctrl.displayType() === 'screen') {
+
+			view.push(m('ul', users().map(function (singleUser) {
+				return m('li', singleUser);
+			})));
+
+		}
+
+		return view;
+
+	}
+
+};
+
 var chooseCategory = {
 
 	controller: function (args) {
@@ -100,13 +138,13 @@ var chooseCategory = {
 
 	view: function (ctrl, args) {
 
-		if (ctrl.displayType === 'host') {
+		if (ctrl.displayType() === 'host') {
 
 			return args.categories.map(function (category) {
 				return m('button', category);
 			});
 
-		} else if (ctrl.displayType === 'screen') {
+		} else if (ctrl.displayType() === 'screen') {
 
 			return m('ul', args.categories.map(function (category) {
 				return m('li', category);
@@ -129,6 +167,8 @@ socket.on('client-accepted', function (userName) {
 	m.startComputation();
 	user.name(userName);
 	m.endComputation();
+
+	m.mount(main, gatheringPlayers);
 
 });
 
