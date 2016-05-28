@@ -11,6 +11,7 @@ var user = (function User () {
 	// ----- Properties ----- //
 
 	var type = null;
+	var name = m.prop();
 
 	// ----- Functions ----- //
 
@@ -22,8 +23,20 @@ var user = (function User () {
 
 	}
 
+	// ----- Constructor ----- //
+
+	// Saves the user's name when they are accepted.
+	socket.on('client-accepted', function (userName) {
+
+		m.startComputation();
+		name(userName);
+		m.endComputation();
+
+	});
+
 	return {
-		set: setUser
+		set: setUser,
+		name: name
 	};
 
 })();
@@ -63,3 +76,14 @@ chooseUser.view = function (ctrl) {
 };
 
 m.mount(document.getElementsByTagName('main')[0], chooseUser);
+
+// ----- Header Component ----- //
+
+var header = {
+	controller: function () {},
+	view: function (ctrl) {
+		return user.name();
+	}
+};
+
+m.mount(document.getElementsByTagName('header')[0], header);
