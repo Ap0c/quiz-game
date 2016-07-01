@@ -18,6 +18,7 @@ var user = (function User () {
 
 	var type = m.prop();
 	var name = m.prop();
+	var answer = m.prop();
 
 	// ----- Functions ----- //
 
@@ -34,7 +35,8 @@ var user = (function User () {
 	return {
 		set: setUser,
 		name: name,
-		type: type
+		type: type,
+		answer: answer
 	};
 
 })();
@@ -98,9 +100,15 @@ var gatheringPlayers = {
 			return user.type();
 		}
 
+		// Emits the begin event.
+		function emitBegin () {
+			socket.emit('begin');
+		}
+
 		return {
 			displayType: displayType,
-			users: game.users
+			users: game.users,
+			begin: emitBegin
 		};
 
 	},
@@ -109,13 +117,8 @@ var gatheringPlayers = {
 
 		var view = ['Gathering Players...'];
 
-		// Emits the begin event.
-		function emitBegin () {
-			socket.emit('begin');
-		}
-
 		if (ctrl.displayType() === 'host') {
-			view.push(m('button.begin', { onclick: emitBegin }, 'Begin'));
+			view.push(m('button.begin', { onclick: ctrl.begin }, 'Begin'));
 		} else if (ctrl.displayType() === 'screen') {
 
 			view.push(m('ul', ctrl.users.map(function (singleUser) {
@@ -139,8 +142,14 @@ var chooseCategory = {
 			return user.type();
 		}
 
+		// Emits the chosen category.
+		function emitCategory (category) {
+			socket.emit('category-chosen', category);
+		}
+
 		return {
-			displayType: displayType
+			displayType: displayType,
+			category: emitCategory
 		};
 
 	},
@@ -152,9 +161,7 @@ var chooseCategory = {
 			return args.categories.map(function (category) {
 
 				return m('button', {
-					onclick: function () {
-						socket.emit('category-chosen', category);
-					}
+					onclick: function () { ctrl.category(category); }
 				}, category);
 
 			});
@@ -182,8 +189,14 @@ var categoryInfo = {
 			return user.type();
 		}
 
+		// Emits the start round event.
+		function emitStartRound () {
+			socket.emit('start-round');
+		}
+
 		return {
-			displayType: displayType
+			displayType: displayType,
+			startRound: emitStartRound
 		};
 
 	},
@@ -192,13 +205,8 @@ var categoryInfo = {
 
 		var view = [args.category];
 
-		// Emits the start round event.
-		function emitStartRound () {
-			socket.emit('start-round');
-		}
-
 		if (ctrl.displayType() === 'host') {
-			view.push(m('button', { onclick: emitStartRound }, 'Start Round'));
+			view.push(m('button', { onclick: ctrl.startRound }, 'Start Round'));
 		}
 
 		return view;
@@ -216,9 +224,15 @@ var showQuestion = {
 			return user.type();
 		}
 
+		// Submits the user's answer.
+		function submitAnswer () {
+			socket.emit('submit-answer', user.answer);
+		}
+
 		return {
 			displayType: displayType,
-			playersSubmitted: game.playersSubmitted
+			playersSubmitted: game.playersSubmitted,
+			submit: submitAnswer
 		};
 
 	},
@@ -240,8 +254,9 @@ var showQuestion = {
 
 			return [
 				args.question.q,
-				m('input', { type: 'text', placeholder: 'Enter answer here...' }),
-				m('button', 'Submit')
+				m('input', { type: 'text', placeholder: 'Enter answer here...',
+					onchange: m.withAttr('value', ctrl.answer) }),
+				m('button', { onclick: ctrl.submit }, 'Submit')
 			];
 
 		}
