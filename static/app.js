@@ -42,6 +42,9 @@ var user = (function User () {
 // List of users.
 var users = [];
 
+// List of players who have submitted answers.
+var playersSubmitted = [];
+
 
 // ----- Components ----- //
 
@@ -188,11 +191,58 @@ var categoryInfo = {
 
 		var view = [args.category];
 
+		// Emits the start round event.
+		function emitStartRound () {
+			socket.emit('start-round');
+		}
+
 		if (ctrl.displayType() === 'host') {
-			view.push(m('button', 'Start Round'));
+			view.push(m('button', { onclick: emitStartRound }, 'Start Round'));
 		}
 
 		return view;
+
+	}
+
+};
+
+var showQuestion = {
+
+	controller: function (args) {
+
+		// Determines what part of the category view this user is displaying.
+		function displayType () {
+			return user.type();
+		}
+
+		return {
+			displayType: displayType
+		};
+
+	},
+
+	view: function (ctrl, args) {
+
+		if (ctrl.displayType() === 'host') {
+
+			return [
+				args.question.a,
+				m('ul', playersSubmitted.map(function (player) {
+					return m('li', player);
+				}))
+			];
+
+		} else if (ctrl.displayType() === 'screen') {
+			return args.question.q;
+		} else {
+
+			return [
+				args.question.q,
+				m('input', { type: 'text', placeholder: 'Enter answer here...' }),
+				m('button', 'Submit')
+			];
+
+		}
 
 	}
 
@@ -247,7 +297,7 @@ socket.on('scores-view', function (scores) {
 });
 
 socket.on('question-view', function (question) {
-	alert(`Question view: ${question}.`);
+	m.mount(main, m.component(showQuestion, { question: question }));
 });
 
 socket.on('answer-submitted', function (name) {
