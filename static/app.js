@@ -161,6 +161,24 @@ var chooseCategory = {
 
 // ----- Socket Events ----- //
 
+socket.on('err', function (err) {
+	alert(err);
+});
+
+socket.on('client-disconnect', function (name) {
+	alert(`Client disconnect: ${name}.`);
+});
+
+// Mounts the category view.
+socket.on('category-view', function (categories) {
+	m.mount(main, chooseCategory, { categories: categories });
+});
+
+// Displays an error message when game fails to begin.
+socket.on('begin-fail', function (msg) {
+	alert(`Begin fail: ${msg}.`);
+});
+
 // Saves the user's name when they are accepted.
 socket.on('client-accepted', function (userName) {
 
@@ -172,9 +190,28 @@ socket.on('client-accepted', function (userName) {
 
 });
 
-// Mounts the category view.
-socket.on('category-view', function (categories) {
-	m.mount(main, chooseCategory, { categories: categories });
+socket.on('host-exists', function () {
+	alert('Host exists');
+});
+
+socket.on('show-category', function (category) {
+	alert(`Show category: ${category}.`);
+});
+
+socket.on('scores-view', function (scores) {
+	alert(`Scores view: ${scores}.`);
+});
+
+socket.on('question-view', function (question) {
+	alert(`Question view: ${question}.`);
+});
+
+socket.on('answer-submitted', function (name) {
+	alert(`Answer submitted: ${name}.`);
+});
+
+socket.on('answers-view', function (answers) {
+	alert(`Answers view: ${answers}.`);
 });
 
 
