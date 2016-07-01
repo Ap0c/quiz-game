@@ -40,7 +40,7 @@ var user = (function User () {
 })();
 
 // List of users.
-var users = m.prop([]);
+var users = [];
 
 
 // ----- Components ----- //
@@ -109,7 +109,7 @@ var gatheringPlayers = {
 			view.push(m('button.begin', 'Begin'));
 		} else if (ctrl.displayType() === 'screen') {
 
-			view.push(m('ul', users().map(function (singleUser) {
+			view.push(m('ul', users.map(function (singleUser) {
 				return m('li', singleUser);
 			})));
 
@@ -182,11 +182,15 @@ socket.on('begin-fail', function (msg) {
 // Saves the user's name when they are accepted.
 socket.on('client-accepted', function (userName) {
 
-	m.startComputation();
 	user.name(userName);
-	m.endComputation();
-
 	m.mount(main, gatheringPlayers);
+
+});
+
+socket.on('new-user', function (name) {
+
+	users.push(name);
+	m.redraw();
 
 });
 
