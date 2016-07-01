@@ -39,11 +39,11 @@ var user = (function User () {
 
 })();
 
-// List of users.
-var users = [];
-
-// List of players who have submitted answers.
-var playersSubmitted = [];
+// Model to manage ongoing game data.
+var game = {
+	users: [],
+	playersSubmitted: []
+};
 
 
 // ----- Components ----- //
@@ -99,7 +99,8 @@ var gatheringPlayers = {
 		}
 
 		return {
-			displayType: displayType
+			displayType: displayType,
+			users: game.users
 		};
 
 	},
@@ -117,7 +118,7 @@ var gatheringPlayers = {
 			view.push(m('button.begin', { onclick: emitBegin }, 'Begin'));
 		} else if (ctrl.displayType() === 'screen') {
 
-			view.push(m('ul', users.map(function (singleUser) {
+			view.push(m('ul', ctrl.users.map(function (singleUser) {
 				return m('li', singleUser);
 			})));
 
@@ -216,7 +217,8 @@ var showQuestion = {
 		}
 
 		return {
-			displayType: displayType
+			displayType: displayType,
+			playersSubmitted: game.playersSubmitted
 		};
 
 	},
@@ -227,7 +229,7 @@ var showQuestion = {
 
 			return [
 				args.question.a,
-				m('ul', playersSubmitted.map(function (player) {
+				m('ul', ctrl.playersSubmitted.map(function (player) {
 					return m('li', player);
 				}))
 			];
