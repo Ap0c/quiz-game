@@ -9,14 +9,6 @@ var main = document.getElementsByTagName('main')[0];
 var header = document.getElementsByTagName('header')[0];
 
 
-// ----- Helpers ----- //
-
-// Emits the begin event.
-function emitBegin () {
-	socket.emit('begin');
-}
-
-
 // ----- Models ----- //
 
 // Constructor for the user.
@@ -113,6 +105,11 @@ var gatheringPlayers = {
 
 		var view = ['Gathering Players...'];
 
+		// Emits the begin event.
+		function emitBegin () {
+			socket.emit('begin');
+		}
+
 		if (ctrl.displayType() === 'host') {
 			view.push(m('button.begin', { onclick: emitBegin }, 'Begin'));
 		} else if (ctrl.displayType() === 'screen') {
@@ -149,7 +146,13 @@ var chooseCategory = {
 		if (ctrl.displayType() === 'host') {
 
 			return args.categories.map(function (category) {
-				return m('button', category);
+
+				return m('button', {
+					onclick: function () {
+						socket.emit('category-chosen', category);
+					}
+				}, category);
+
 			});
 
 		} else if (ctrl.displayType() === 'screen') {
@@ -161,6 +164,35 @@ var chooseCategory = {
 		} else {
 			return m('', 'Category being chosen...');
 		}
+
+	}
+
+};
+
+var categoryInfo = {
+
+	controller: function (args) {
+
+		// Determines what part of the category view this user is displaying.
+		function displayType () {
+			return user.type();
+		}
+
+		return {
+			displayType: displayType
+		};
+
+	},
+
+	view: function (ctrl, args) {
+
+		var view = [args.category];
+
+		if (ctrl.displayType() === 'host') {
+			view.push(m('button', 'Start Round'));
+		}
+
+		return view;
 
 	}
 
@@ -207,7 +239,7 @@ socket.on('host-exists', function () {
 });
 
 socket.on('show-category', function (category) {
-	alert(`Show category: ${category}.`);
+	m.mount(main, m.component(categoryInfo, { category: category }));
 });
 
 socket.on('scores-view', function (scores) {
