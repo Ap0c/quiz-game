@@ -9,6 +9,14 @@ var main = document.getElementsByTagName('main')[0];
 var header = document.getElementsByTagName('header')[0];
 
 
+// ----- Helpers ----- //
+
+// Emits the begin event.
+function emitBegin () {
+	socket.emit('begin');
+}
+
+
 // ----- Models ----- //
 
 // Constructor for the user.
@@ -106,7 +114,7 @@ var gatheringPlayers = {
 		var view = ['Gathering Players...'];
 
 		if (ctrl.displayType() === 'host') {
-			view.push(m('button.begin', 'Begin'));
+			view.push(m('button.begin', { onclick: emitBegin }, 'Begin'));
 		} else if (ctrl.displayType() === 'screen') {
 
 			view.push(m('ul', users.map(function (singleUser) {
