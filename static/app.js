@@ -179,12 +179,12 @@ socket.on('client-disconnect', function (name) {
 
 // Mounts the category view.
 socket.on('category-view', function (categories) {
-	m.mount(main, chooseCategory, { categories: categories });
+	m.mount(main, m.component(chooseCategory, { categories: categories }));
 });
 
 // Displays an error message when game fails to begin.
 socket.on('begin-fail', function (msg) {
-	alert(`Begin fail: ${msg}.`);
+	alert(`Begin fail: ${msg}`);
 });
 
 // Saves the user's name when they are accepted.
