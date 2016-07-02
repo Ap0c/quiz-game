@@ -242,6 +242,7 @@ var showQuestion = {
 		return {
 			userType: user.type,
 			playersSubmitted: game.playersSubmitted,
+			question: game.question,
 			submit: game.answer,
 			answer: user.answer
 		};
@@ -253,18 +254,18 @@ var showQuestion = {
 		if (ctrl.userType() === 'host') {
 
 			return [
-				args.question.a,
+				ctrl.question().a,
 				m('ul', ctrl.playersSubmitted.map(function (player) {
 					return m('li', player);
 				}))
 			];
 
 		} else if (ctrl.userType() === 'screen') {
-			return args.question.q;
+			return ctrl.question().q;
 		} else {
 
 			return [
-				args.question.q,
+				ctrl.question().q,
 				m('input', { type: 'text', placeholder: 'Enter answer here...',
 					onchange: m.withAttr('value', ctrl.answer) }),
 				m('button', { onclick: ctrl.submit }, 'Submit')
@@ -331,7 +332,10 @@ socket.on('scores-view', function (scores) {
 });
 
 socket.on('question-view', function (question) {
-	m.mount(main, m.component(showQuestion, { question: question }));
+
+	game.question(question);
+	m.mount(main, showQuestion);
+
 });
 
 socket.on('answer-submitted', function (name) {
