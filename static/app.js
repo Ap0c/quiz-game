@@ -48,6 +48,7 @@ var game = (function Game () {
 
 	var category = m.prop();
 	var question = m.prop();
+	var users = m.prop([]);
 
 	// ----- Functions ----- //
 
@@ -86,7 +87,7 @@ var game = (function Game () {
 	// ----- Constructor ----- //
 
 	return {
-		users: [],
+		users: users,
 		playersSubmitted: [],
 		category: accessCategory,
 		question: question,
@@ -143,7 +144,7 @@ var chooseUser = {
 
 var gatheringPlayers = {
 
-	controller: function (args) {
+	controller: function () {
 
 		return {
 			userType: user.type,
@@ -161,7 +162,7 @@ var gatheringPlayers = {
 			view.push(m('button.begin', { onclick: ctrl.begin }, 'Begin'));
 		} else if (ctrl.userType() === 'screen') {
 
-			view.push(m('ul', ctrl.users.map(function (singleUser) {
+			view.push(m('ul', ctrl.users().map(function (singleUser) {
 				return m('li', singleUser);
 			})));
 
@@ -306,9 +307,9 @@ socket.on('client-accepted', function (userName) {
 
 });
 
-socket.on('new-user', function (name) {
+socket.on('new-user', function (users) {
 
-	game.users.push(name);
+	game.users(users);
 	m.redraw();
 
 });
