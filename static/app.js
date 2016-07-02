@@ -289,7 +289,7 @@ socket.on('client-accepted', function (userName) {
 
 socket.on('new-user', function (name) {
 
-	users.push(name);
+	game.users.push(name);
 	m.redraw();
 
 });
