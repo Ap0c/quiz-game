@@ -49,6 +49,7 @@ var game = (function Game () {
 	var category = m.prop();
 	var question = m.prop();
 	var users = m.prop([]);
+	var playersSubmitted = m.prop([]);
 
 	// ----- Functions ----- //
 
@@ -88,7 +89,7 @@ var game = (function Game () {
 
 	return {
 		users: users,
-		playersSubmitted: [],
+		playersSubmitted: playersSubmitted,
 		category: accessCategory,
 		question: question,
 		begin: emitBegin,
@@ -256,7 +257,7 @@ var showQuestion = {
 
 			return [
 				ctrl.question().a,
-				m('ul', ctrl.playersSubmitted.map(function (player) {
+				m('ul', ctrl.playersSubmitted().map(function (player) {
 					return m('li', player);
 				}))
 			];
@@ -339,8 +340,11 @@ socket.on('question-view', function (question) {
 
 });
 
-socket.on('answer-submitted', function (name) {
-	alert(`Answer submitted: ${name}.`);
+socket.on('answer-submitted', function (users) {
+
+	game.playersSubmitted(users);
+	m.redraw();
+
 });
 
 socket.on('answers-view', function (answers) {
