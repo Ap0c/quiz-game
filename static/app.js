@@ -41,8 +41,13 @@ var user = (function User () {
 
 })();
 
-// Model to manage ongoing game data and communication with the game server.
+// Model to manage the current state of the game.
 var game = (function Game () {
+
+	// ----- Properties ----- //
+
+	var category = m.prop();
+	var question = m.prop();
 
 	// ----- Functions ----- //
 
@@ -52,8 +57,20 @@ var game = (function Game () {
 	}
 
 	// Emits the chosen category.
-	function emitCategory (category) {
-		socket.emit('category-chosen', category);
+	function accessCategory (newCategory) {
+
+		if (newCategory) {
+
+			category(newCategory);
+
+			if (user.type() === 'host') {
+				socket.emit('category-chosen', newCategory);
+			}
+
+		} else {
+			return category();
+		}
+		
 	}
 
 	// Emits the start round event.
@@ -71,10 +88,11 @@ var game = (function Game () {
 	return {
 		users: [],
 		playersSubmitted: [],
+		category: accessCategory,
+		question: question,
 		begin: emitBegin,
-		category: emitCategory,
 		startRound: emitStartRound,
-		submitAnswer: submitAnswer
+		answer: submitAnswer
 	};
 
 })();
@@ -194,7 +212,7 @@ var chooseCategory = {
 
 var categoryInfo = {
 
-	controller: function (args) {
+	controller: function () {
 
 		return {
 			userType: user.type,
@@ -203,9 +221,9 @@ var categoryInfo = {
 
 	},
 
-	view: function (ctrl, args) {
+	view: function (ctrl) {
 
-		var view = [args.category];
+		var view = [game.category()];
 
 		if (ctrl.userType() === 'host') {
 			view.push(m('button', { onclick: ctrl.startRound }, 'Start Round'));
@@ -224,7 +242,7 @@ var showQuestion = {
 		return {
 			userType: user.type,
 			playersSubmitted: game.playersSubmitted,
-			submit: game.submitAnswer,
+			submit: game.answer,
 			answer: user.answer
 		};
 
@@ -299,7 +317,13 @@ socket.on('host-exists', function () {
 });
 
 socket.on('show-category', function (category) {
-	m.mount(main, m.component(categoryInfo, { category: category }));
+
+	if (user.type() !== 'host') {
+		game.category(category);
+	}
+
+	m.mount(main, categoryInfo);
+
 });
 
 socket.on('scores-view', function (scores) {
