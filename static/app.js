@@ -41,11 +41,43 @@ var user = (function User () {
 
 })();
 
-// Model to manage ongoing game data.
-var game = {
-	users: [],
-	playersSubmitted: []
-};
+// Model to manage ongoing game data and communication with the game server.
+var game = (function Game () {
+
+	// ----- Functions ----- //
+
+	// Emits the begin event.
+	function emitBegin () {
+		socket.emit('begin');
+	}
+
+	// Emits the chosen category.
+	function emitCategory (category) {
+		socket.emit('category-chosen', category);
+	}
+
+	// Emits the start round event.
+	function emitStartRound () {
+		socket.emit('start-round');
+	}
+
+	// Submits the user's answer.
+	function submitAnswer () {
+		socket.emit('submit-answer', user.answer);
+	}
+
+	// ----- Constructor ----- //
+
+	return {
+		users: [],
+		playersSubmitted: [],
+		begin: emitBegin,
+		category: emitCategory,
+		startRound: emitStartRound,
+		submitAnswer: submitAnswer
+	};
+
+})();
 
 
 // ----- Components ----- //
@@ -95,20 +127,10 @@ var gatheringPlayers = {
 
 	controller: function (args) {
 
-		// Determines what part of the view to display.
-		function displayType () {
-			return user.type();
-		}
-
-		// Emits the begin event.
-		function emitBegin () {
-			socket.emit('begin');
-		}
-
 		return {
-			displayType: displayType,
+			userType: user.type,
 			users: game.users,
-			begin: emitBegin
+			begin: game.begin
 		};
 
 	},
@@ -117,9 +139,9 @@ var gatheringPlayers = {
 
 		var view = ['Gathering Players...'];
 
-		if (ctrl.displayType() === 'host') {
+		if (ctrl.userType() === 'host') {
 			view.push(m('button.begin', { onclick: ctrl.begin }, 'Begin'));
-		} else if (ctrl.displayType() === 'screen') {
+		} else if (ctrl.userType() === 'screen') {
 
 			view.push(m('ul', ctrl.users.map(function (singleUser) {
 				return m('li', singleUser);
@@ -137,26 +159,16 @@ var chooseCategory = {
 
 	controller: function (args) {
 
-		// Determines what part of the category view this user is displaying.
-		function displayType () {
-			return user.type();
-		}
-
-		// Emits the chosen category.
-		function emitCategory (category) {
-			socket.emit('category-chosen', category);
-		}
-
 		return {
-			displayType: displayType,
-			category: emitCategory
+			userType: user.type,
+			category: game.category
 		};
 
 	},
 
 	view: function (ctrl, args) {
 
-		if (ctrl.displayType() === 'host') {
+		if (ctrl.userType() === 'host') {
 
 			return args.categories.map(function (category) {
 
@@ -166,7 +178,7 @@ var chooseCategory = {
 
 			});
 
-		} else if (ctrl.displayType() === 'screen') {
+		} else if (ctrl.userType() === 'screen') {
 
 			return m('ul', args.categories.map(function (category) {
 				return m('li', category);
@@ -184,19 +196,9 @@ var categoryInfo = {
 
 	controller: function (args) {
 
-		// Determines what part of the category view this user is displaying.
-		function displayType () {
-			return user.type();
-		}
-
-		// Emits the start round event.
-		function emitStartRound () {
-			socket.emit('start-round');
-		}
-
 		return {
-			displayType: displayType,
-			startRound: emitStartRound
+			userType: user.type,
+			startRound: game.startRound
 		};
 
 	},
@@ -205,7 +207,7 @@ var categoryInfo = {
 
 		var view = [args.category];
 
-		if (ctrl.displayType() === 'host') {
+		if (ctrl.userType() === 'host') {
 			view.push(m('button', { onclick: ctrl.startRound }, 'Start Round'));
 		}
 
@@ -219,27 +221,18 @@ var showQuestion = {
 
 	controller: function (args) {
 
-		// Determines what part of the category view this user is displaying.
-		function displayType () {
-			return user.type();
-		}
-
-		// Submits the user's answer.
-		function submitAnswer () {
-			socket.emit('submit-answer', user.answer);
-		}
-
 		return {
-			displayType: displayType,
+			userType: user.type,
 			playersSubmitted: game.playersSubmitted,
-			submit: submitAnswer
+			submit: game.submitAnswer,
+			answer: user.answer
 		};
 
 	},
 
 	view: function (ctrl, args) {
 
-		if (ctrl.displayType() === 'host') {
+		if (ctrl.userType() === 'host') {
 
 			return [
 				args.question.a,
@@ -248,7 +241,7 @@ var showQuestion = {
 				}))
 			];
 
-		} else if (ctrl.displayType() === 'screen') {
+		} else if (ctrl.userType() === 'screen') {
 			return args.question.q;
 		} else {
 
