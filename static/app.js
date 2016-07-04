@@ -117,7 +117,7 @@ var game = (function Game () {
 
 	// Submit's the host's given scores for each user.
 	function submitScores () {
-		console.log(scores);
+		socket.emit('scored', scores);
 	}
 
 	// ----- Constructor ----- //
