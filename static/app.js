@@ -53,6 +53,7 @@ var game = (function Game () {
 	var points = m.prop();
 	var users = m.prop([]);
 	var playersSubmitted = m.prop([]);
+	var scores = {};
 
 	// ----- Functions ----- //
 
@@ -100,6 +101,11 @@ var game = (function Game () {
 
 	}
 
+	// Stores a user's question score.
+	function addScore (user, score) {
+		scores[user] = score;
+	}
+
 	// Submits the user's answer.
 	function submitAnswer () {
 
@@ -107,6 +113,11 @@ var game = (function Game () {
 		playersSubmitted(playersSubmitted().concat(user.name()));
 		socket.emit('submit-answer', user.answer());
 
+	}
+
+	// Submit's the host's given scores for each user.
+	function submitScores () {
+		console.log(scores);
 	}
 
 	// ----- Constructor ----- //
@@ -117,9 +128,11 @@ var game = (function Game () {
 		category: accessCategory,
 		question: accessQuestion,
 		points: points,
+		score: addScore,
 		begin: emitBegin,
 		startRound: emitStartRound,
-		answer: submitAnswer
+		answer: submitAnswer,
+		scores: submitScores
 	};
 
 })();
@@ -319,7 +332,9 @@ var showAnswers = {
 	controller: function (args) {
 
 		return {
-			userType: user.type			
+			userType: user.type,
+			score: game.score,
+			submit: game.scores
 		};
 
 	},
@@ -327,7 +342,26 @@ var showAnswers = {
 	view: function (ctrl, args) {
 
 		if (ctrl.userType() === 'host') {
-			return 'Scorecard';
+
+			return [
+
+				args.answers.map(function (answer) {
+
+					return [
+						m('label', answer.user.name),
+						m('input', {
+							type: 'number',
+							onchange: m.withAttr('value',
+								ctrl.score.bind(null, answer.user.id)
+							)
+						})
+					];
+
+				}),
+				m('button', { onclick: ctrl.submit }, 'Score')
+
+			];
+
 		} else if (ctrl.userType() === 'screen') {
 
 			return args.answers.map(function (answer) {
