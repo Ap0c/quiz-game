@@ -50,6 +50,7 @@ var game = (function Game () {
 
 	var category = m.prop();
 	var question = m.prop();
+	var points = m.prop();
 	var users = m.prop([]);
 	var playersSubmitted = m.prop([]);
 
@@ -60,7 +61,7 @@ var game = (function Game () {
 		socket.emit('begin');
 	}
 
-	// Emits the chosen category.
+	// Sets and emits the chosen category, or retrieves it.
 	function accessCategory (newCategory) {
 
 		if (newCategory) {
@@ -82,6 +83,23 @@ var game = (function Game () {
 		socket.emit('start-round');
 	}
 
+	// Sets the new question and points, or retrieves it.
+	function accessQuestion (newQuestion) {
+
+		if (newQuestion) {
+
+			question(newQuestion);
+			playersSubmitted([]);
+			user.answer(null);
+			user.submitted(false);
+			points(newQuestion.a.length);
+
+		} else {
+			return question();
+		}
+
+	}
+
 	// Submits the user's answer.
 	function submitAnswer () {
 
@@ -97,7 +115,8 @@ var game = (function Game () {
 		users: users,
 		playersSubmitted: playersSubmitted,
 		category: accessCategory,
-		question: question,
+		question: accessQuestion,
+		points: points,
 		begin: emitBegin,
 		startRound: emitStartRound,
 		answer: submitAnswer
@@ -251,6 +270,7 @@ var showQuestion = {
 			userType: user.type,
 			playersSubmitted: game.playersSubmitted,
 			question: game.question,
+			points: game.points,
 			submit: game.answer,
 			answer: user.answer,
 			submitted: user.submitted
@@ -270,7 +290,7 @@ var showQuestion = {
 			];
 
 		} else if (ctrl.userType() === 'screen') {
-			return ctrl.question().q;
+			return [ctrl.question().q, `${ctrl.points()} point(s).`];
 		} else {
 
 			if (ctrl.submitted()) {
@@ -379,7 +399,6 @@ socket.on('scores-view', function (scores) {
 socket.on('question-view', function (question) {
 
 	game.question(question);
-	user.submitted(false);
 	m.mount(main, showQuestion);
 
 });
