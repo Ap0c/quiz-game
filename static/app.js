@@ -19,6 +19,7 @@ var user = (function User () {
 	var type = m.prop();
 	var name = m.prop();
 	var answer = m.prop();
+	var submitted = m.prop(false);
 
 	// ----- Functions ----- //
 
@@ -36,7 +37,8 @@ var user = (function User () {
 		set: setUser,
 		name: name,
 		type: type,
-		answer: answer
+		answer: answer,
+		submitted: submitted
 	};
 
 })();
@@ -82,7 +84,11 @@ var game = (function Game () {
 
 	// Submits the user's answer.
 	function submitAnswer () {
+
+		user.submitted(true);
+		playersSubmitted(playersSubmitted().concat(user.name()));
 		socket.emit('submit-answer', user.answer);
+
 	}
 
 	// ----- Constructor ----- //
@@ -246,7 +252,8 @@ var showQuestion = {
 			playersSubmitted: game.playersSubmitted,
 			question: game.question,
 			submit: game.answer,
-			answer: user.answer
+			answer: user.answer,
+			submitted: user.submitted
 		};
 
 	},
@@ -265,6 +272,14 @@ var showQuestion = {
 		} else if (ctrl.userType() === 'screen') {
 			return ctrl.question().q;
 		} else {
+
+			if (ctrl.submitted()) {
+
+				return m('ul', ctrl.playersSubmitted().map(function (player) {
+					return m('li', player);
+				}));
+
+			}
 
 			return [
 				ctrl.question().q,
@@ -336,6 +351,7 @@ socket.on('scores-view', function (scores) {
 socket.on('question-view', function (question) {
 
 	game.question(question);
+	user.submitted(false);
 	m.mount(main, showQuestion);
 
 });
