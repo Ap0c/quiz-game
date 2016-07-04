@@ -87,7 +87,7 @@ var game = (function Game () {
 
 		user.submitted(true);
 		playersSubmitted(playersSubmitted().concat(user.name()));
-		socket.emit('submit-answer', user.answer);
+		socket.emit('submit-answer', user.answer());
 
 	}
 
@@ -294,6 +294,34 @@ var showQuestion = {
 
 };
 
+var showAnswers = {
+
+	controller: function (args) {
+
+		return {
+			userType: user.type			
+		};
+
+	},
+
+	view: function (ctrl, args) {
+
+		if (ctrl.userType() === 'host') {
+			return 'Scorecard';
+		} else if (ctrl.userType() === 'screen') {
+
+			return args.answers.map(function (answer) {
+				return [m('h3', answer.user.name), answer.answer];
+			});
+
+		} else {
+			return game.question().q;
+		}
+
+	}
+
+};
+
 
 // ----- Socket Events ----- //
 
@@ -364,7 +392,7 @@ socket.on('answer-submitted', function (users) {
 });
 
 socket.on('answers-view', function (answers) {
-	alert(`Answers view: ${answers}.`);
+	m.mount(main, m.component(showAnswers, { answers: answers }));
 });
 
 
