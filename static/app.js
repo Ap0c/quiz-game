@@ -131,6 +131,11 @@ var game = (function Game () {
 		socket.emit('scored', scores);
 	}
 
+	// Ends the game.
+	function finish () {
+		socket.emit('finish');
+	}
+
 	// ----- Constructor ----- //
 
 	return {
@@ -143,7 +148,8 @@ var game = (function Game () {
 		begin: emitBegin,
 		startRound: emitStartRound,
 		answer: submitAnswer,
-		scores: submitScores
+		scores: submitScores,
+		finish: finish
 	};
 
 })();
@@ -393,7 +399,8 @@ var showScores = {
 
 		return {
 			userType: user.type,
-			nextRound: game.begin
+			nextRound: game.begin,
+			finish: game.finish
 		};
 
 	},
@@ -404,7 +411,7 @@ var showScores = {
 
 			return [
 				m('button', { onclick: ctrl.nextRound }, 'Next Round'),
-				m('button', 'Finish')
+				m('button', { onclick: ctrl.finish }, 'Finish')
 			];
 
 		}
@@ -412,6 +419,29 @@ var showScores = {
 		return args.scores.map(function (score) {
 			return [m('h3', score.user), score.score];
 		});
+
+	}
+
+};
+
+var showWinners = {
+
+	controller: function (args) {},
+
+	view: function (ctrl, args) {
+
+		if (args.winners.length > 1) {
+
+			return [
+				m('h2', 'The Winners Are:'),
+				args.winners.map(function (winner) {
+					return m('h3', winner.user);
+				})
+			];
+
+		} else {
+			return m('h2', `${args.winners[0].user} wins!`);
+		}
 
 	}
 
@@ -487,6 +517,10 @@ socket.on('answer-submitted', function (users) {
 
 socket.on('answers-view', function (answers) {
 	m.mount(main, m.component(showAnswers, { answers: answers }));
+});
+
+socket.on('winners', function (winners) {
+	m.mount(main, m.component(showWinners, { winners: winners }));
 });
 
 
