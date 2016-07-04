@@ -4,6 +4,6 @@
 	],
 	"catTwo": [
 		{"q": "Question Two", "a": ["Answer Two"]},
-		{"q": "Question Three", "a": ["Answer Three"]}
+		{"q": "Question Three", "a": ["Answer Three", "Answer Four"]}
 	]
 }

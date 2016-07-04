@@ -103,7 +103,18 @@ var game = (function Game () {
 
 	// Stores a user's question score.
 	function addScore (user, score) {
-		scores[user] = score;
+
+		var intScore = parseInt(score) || 0;
+		var maxScore = points();
+
+		if (intScore < 0) {
+			scores[user] = 0;
+		} else if (intScore > maxScore) {
+			scores[user] = maxScore;
+		} else {
+			scores[user] = intScore;
+		}
+
 	}
 
 	// Submits the user's answer.
@@ -376,6 +387,36 @@ var showAnswers = {
 
 };
 
+var showScores = {
+
+	controller: function (args) {
+
+		return {
+			userType: user.type,
+			nextRound: game.begin
+		};
+
+	},
+
+	view: function (ctrl, args) {
+
+		if (ctrl.userType() === 'host') {
+
+			return [
+				m('button', { onclick: ctrl.nextRound }, 'Next Round'),
+				m('button', 'Finish')
+			];
+
+		}
+
+		return args.scores.map(function (score) {
+			return [m('h3', score.user), score.score];
+		});
+
+	}
+
+};
+
 
 // ----- Socket Events ----- //
 
@@ -427,7 +468,7 @@ socket.on('show-category', function (category) {
 });
 
 socket.on('scores-view', function (scores) {
-	alert(`Scores view: ${scores}.`);
+	m.mount(main, m.component(showScores, { scores: scores }));
 });
 
 socket.on('question-view', function (question) {
