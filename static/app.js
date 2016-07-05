@@ -145,11 +145,11 @@ var game = (function Game () {
 		category: accessCategory,
 		question: accessQuestion,
 		points: points,
-		score: addScore,
+		saveAnswer: submitAnswer,
+		saveScore: addScore,
+		saveScores: submitScores,
 		begin: emitBegin,
 		startRound: emitStartRound,
-		answer: submitAnswer,
-		saveScores: submitScores,
 		finish: finish
 	};
 
@@ -365,7 +365,7 @@ components.player.question = {
 		return {
 			question: game.question,
 			answer: user.answer,
-			submit: game.answer
+			submit: game.saveAnswer
 		};
 
 	},
@@ -411,7 +411,7 @@ components.host.answers = {
 
 		}
 
-		return { submit: scoresSubmit, score: game.score };
+		return { submit: scoresSubmit, score: game.saveScore };
 
 	},
 
