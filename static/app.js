@@ -242,39 +242,42 @@ components.player.gatheringPlayers = {
 
 };
 
-var chooseCategory = {
+components.host.chooseCategory = {
 
 	controller: function (args) {
-
-		return {
-			userType: user.type,
-			category: game.category
-		};
-
+		return { category: game.category };
 	},
 
 	view: function (ctrl, args) {
 
-		if (ctrl.userType() === 'host') {
+		return args.categories.map(function (category) {
 
-			return args.categories.map(function (category) {
+			return m('button', {
+				onclick: function () { ctrl.category(category); }
+			}, category);
 
-				return m('button', {
-					onclick: function () { ctrl.category(category); }
-				}, category);
+		});
 
-			});
+	}
 
-		} else if (ctrl.userType() === 'screen') {
+};
 
-			return m('ul', args.categories.map(function (category) {
-				return m('li', category);
-			}));
+components.screen.chooseCategory = {
 
-		} else {
-			return m('', 'Category being chosen...');
-		}
+	view: function (ctrl, args) {
 
+		return m('ul', args.categories.map(function (category) {
+			return m('li', category);
+		}));
+
+	}
+
+};
+
+components.player.chooseCategory = {
+
+	view: function (ctrl) {
+		return m('p', 'Category being chosen...');
 	}
 
 };
@@ -472,7 +475,11 @@ socket.on('client-disconnect', function (name) {
 
 // Mounts the category view.
 socket.on('category-view', function (categories) {
-	m.mount(main, m.component(chooseCategory, { categories: categories }));
+
+	var component = components[user.type()].chooseCategory;
+	var args = { categories: categories };
+	m.mount(main, m.component(component, args));
+
 });
 
 // Displays an error message when game fails to begin.
