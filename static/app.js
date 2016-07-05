@@ -490,9 +490,7 @@ components.screen.scores = components.player.scores = {
 
 };
 
-var showWinners = {
-
-	controller: function (args) {},
+components.all.winners = {
 
 	view: function (ctrl, args) {
 
@@ -598,7 +596,7 @@ socket.on('answers-view', function (answers) {
 });
 
 socket.on('winners', function (winners) {
-	m.mount(main, m.component(showWinners, { winners: winners }));
+	m.mount(main, m.component(components.all.winners, { winners: winners }));
 });
 
 
