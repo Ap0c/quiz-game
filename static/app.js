@@ -31,8 +31,6 @@ var user = (function User () {
 			username = 'Screen';
 		}
 
-		console.log(username);
-
 		type(userType);
 		name(username);
 		var previous = localStorage.userID;
@@ -577,10 +575,15 @@ socket.on('begin-fail', function (msg) {
 });
 
 // Saves the user's name when they are accepted.
-socket.on('client-accepted', function () {
+socket.on('client-accepted', function (previous) {
 
 	user.save();
-	mountComponent(main, 'gatheringPlayers');
+
+	if (previous) {
+		mountComponent(main, 'chooseCategory');
+	} else {
+		mountComponent(main, 'gatheringPlayers');
+	}
 
 });
 
