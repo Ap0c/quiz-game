@@ -19,7 +19,6 @@ var user = (function User () {
 	var type = m.prop();
 	var name = m.prop();
 	var answer = m.prop();
-	var submitted = m.prop(false);
 
 	// ----- Functions ----- //
 
@@ -47,8 +46,7 @@ var user = (function User () {
 		save: saveUser,
 		name: name,
 		type: type,
-		answer: answer,
-		submitted: submitted
+		answer: answer
 	};
 
 })();
@@ -102,7 +100,6 @@ var game = (function Game () {
 			question(newQuestion);
 			playersSubmitted([]);
 			user.answer(null);
-			user.submitted(false);
 			points(newQuestion.a.length);
 
 		} else {
@@ -130,7 +127,6 @@ var game = (function Game () {
 	// Submits the user's answer.
 	function submitAnswer () {
 
-		user.submitted(true);
 		playersSubmitted(playersSubmitted().concat(user.name()));
 		socket.emit('submit-answer', user.answer());
 		mountComponent(main, 'questionSubmitted');
