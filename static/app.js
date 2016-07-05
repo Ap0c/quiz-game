@@ -149,7 +149,7 @@ var game = (function Game () {
 		begin: emitBegin,
 		startRound: emitStartRound,
 		answer: submitAnswer,
-		scores: submitScores,
+		saveScores: submitScores,
 		finish: finish
 	};
 
@@ -390,51 +390,73 @@ components.player.questionSubmitted = {
 
 };
 
-var showAnswers = {
+components.host.answers = {
 
 	controller: function (args) {
 
-		return {
-			userType: user.type,
-			score: game.score,
-			submit: game.scores
-		};
+		// Saves the scores to the game model.
+		function scoresSubmit (event) {
+
+			event.preventDefault();
+			game.saveScores();
+
+		}
+
+		return { submit: scoresSubmit, score: game.score };
 
 	},
 
 	view: function (ctrl, args) {
 
-		if (ctrl.userType() === 'host') {
+		// Produces a scoring input for a given answer.
+		function answerScore (answer, answerNumber) {
+
+			var id = `score-input-${answerNumber}`;
 
 			return [
-
-				args.answers.map(function (answer) {
-
-					return [
-						m('label', answer.user.name),
-						m('input', {
-							type: 'number',
-							onchange: m.withAttr('value',
-								ctrl.score.bind(null, answer.user.id)
-							)
-						})
-					];
-
-				}),
-				m('button', { onclick: ctrl.submit }, 'Score')
-
+				m('label', { for: id }, answer.user.name),
+				m('input', {
+					id: id,
+					type: 'number',
+					onchange: m.withAttr('value',
+						ctrl.score.bind(null, answer.user.id)
+					)
+				})
 			];
 
-		} else if (ctrl.userType() === 'screen') {
-
-			return args.answers.map(function (answer) {
-				return [m('h3', answer.user.name), answer.answer];
-			});
-
-		} else {
-			return game.question().q;
 		}
 
+		return [
+			m('form', { onsubmit: ctrl.submit }, [
+				args.answers.map(answerScore),
+				m('button[type="submit"', 'Score')
+			])
+		];
+
+	}
+
+};
+
+components.screen.answers = {
+
+	view: function (ctrl, args) {
+
+		return args.answers.map(function (answer) {
+			return [m('h3', answer.user.name), answer.answer];
+		});
+
+	}
+
+};
+
+components.player.answers = {
+
+	controller: function () {
+		return { question: game.question };
+	},
+
+	view: function (ctrl) {
+		return ctrl.question().q;
 	}
 
 };
@@ -566,7 +588,11 @@ socket.on('answer-submitted', function (users) {
 });
 
 socket.on('answers-view', function (answers) {
-	m.mount(main, m.component(showAnswers, { answers: answers }));
+
+	var component = components[user.type()].answers;
+	var args = { answers: answers };
+	m.mount(main, m.component(component, args));
+
 });
 
 socket.on('winners', function (winners) {
