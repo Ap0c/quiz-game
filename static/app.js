@@ -157,25 +157,25 @@ var game = (function Game () {
 
 // ----- Components ----- //
 
+// A set of components based upon user type.
+var components = { host: {}, player: {}, screen: {}, all: {} };
+
 // The page header.
-var head = {
+components.all.head = {
+
 	view: function (ctrl) {
 		return user.name();
 	}
+
 };
 
 // The user type choice screen.
-var chooseUser = {
+components.all.chooseUser = {
 
 	controller: function () {
 
-		// Sets the user to a given type
-		function setUser (type) {
-			user.set(type);
-		}
-
 		return {
-			user: setUser
+			user: user.set
 		};
 
 	},
@@ -198,34 +198,46 @@ var chooseUser = {
 
 };
 
-var gatheringPlayers = {
+components.host.gatheringPlayers = {
 
 	controller: function () {
-
-		return {
-			userType: user.type,
-			users: game.users,
-			begin: game.begin
-		};
-
+		return { begin: game.begin };
 	},
 
 	view: function (ctrl) {
 
-		var view = ['Gathering Players...'];
+		return [
+			m('p', 'Gathering Players...'),
+			m('button.begin', { onclick: ctrl.begin }, 'Begin')
+		];
 
-		if (ctrl.userType() === 'host') {
-			view.push(m('button.begin', { onclick: ctrl.begin }, 'Begin'));
-		} else if (ctrl.userType() === 'screen') {
+	}
 
-			view.push(m('ul', ctrl.users().map(function (singleUser) {
+};
+
+components.screen.gatheringPlayers = {
+
+	controller: function () {
+		return { users: game.users };
+	},
+
+	view: function (ctrl) {
+
+		return [
+			m('p', 'Gathering Players...'),
+			m('ul', ctrl.users().map(function (singleUser) {
 				return m('li', singleUser);
-			})));
+			}))
+		];
 
-		}
+	}
 
-		return view;
+};
 
+components.player.gatheringPlayers = {
+
+	view: function (ctrl) {
+		return m('p', 'Gathering players...');
 	}
 
 };
@@ -472,7 +484,7 @@ socket.on('begin-fail', function (msg) {
 socket.on('client-accepted', function (userName) {
 
 	user.name(userName);
-	m.mount(main, gatheringPlayers);
+	m.mount(main, components[user.type()].gatheringPlayers);
 
 });
 
@@ -526,5 +538,5 @@ socket.on('winners', function (winners) {
 
 // ----- Default Components ----- //
 
-m.mount(main, chooseUser);
-m.mount(header, head);
+m.mount(main, components.all.chooseUser);
+m.mount(header, components.all.head);
