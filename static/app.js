@@ -23,19 +23,30 @@ var user = (function User () {
 	// ----- Functions ----- //
 
 	// Sets the user to a given type.
-	function setUser (userType) {
+	function setUser (userType, username) {
 
-		var previous = localStorage.userID;
-		socket.emit('add-user', { type: userType, previous: previous });
+		if (userType === 'host') {
+			username = 'Host';
+		} else if (userType === 'screen') {
+			username = 'Screen';
+		}
+
+		console.log(username);
+
 		type(userType);
+		name(username);
+		var previous = localStorage.userID;
+
+		var info = { type: userType, previous: previous, name: username };
+		socket.emit('add-user', info);
 
 	}
 
 	// Saves the user name and ID.
-	function saveUser (userName) {
+	function saveUser () {
 
 		localStorage.userID = `/#${socket.id}`;
-		name(userName);
+		localStorage.userName = name();
 
 	}
 
@@ -194,15 +205,33 @@ components.all.chooseUser = {
 
 	view: function (ctrl) {
 
+		// Optionally gets a name and saves the user.
+		function chooseUser (type) {
+
+			if (type === 'player') {
+
+				var userName = window.prompt('Enter a Username:',
+					localStorage.userName);
+
+				if (userName) {
+					ctrl.user(type, userName);
+				}
+
+			} else {
+				ctrl.user(type);
+			}
+
+		}
+
 		return [
 			m('button.choose-player', {
-				onclick: function () { ctrl.user('player'); }
+				onclick: function () { chooseUser('player'); }
 			}, 'Player'),
 			m('button.choose-host', {
-				onclick: function () { ctrl.user('host'); }
+				onclick: function () { chooseUser('host'); }
 			}, 'Host'),
 			m('button.choose-screen', {
-				onclick: function () { ctrl.user('screen'); }
+				onclick: function () { chooseUser('screen'); }
 			}, 'Screen')
 		];
 
@@ -548,9 +577,9 @@ socket.on('begin-fail', function (msg) {
 });
 
 // Saves the user's name when they are accepted.
-socket.on('client-accepted', function (userName) {
+socket.on('client-accepted', function () {
 
-	user.save(userName);
+	user.save();
 	mountComponent(main, 'gatheringPlayers');
 
 });
