@@ -164,7 +164,7 @@ var components = { host: {}, player: {}, screen: {}, all: {} };
 components.all.head = {
 
 	view: function (ctrl) {
-		return user.name();
+		return m('h3', user.name());
 	}
 
 };
@@ -173,11 +173,7 @@ components.all.head = {
 components.all.chooseUser = {
 
 	controller: function () {
-
-		return {
-			user: user.set
-		};
-
+		return { user: user.set };
 	},
 
 	view: function (ctrl) {
@@ -282,27 +278,31 @@ components.player.chooseCategory = {
 
 };
 
-var categoryInfo = {
+components.host.categoryInfo = {
 
 	controller: function () {
+		return { startRound: game.startRound, category: game.category };
+	},
 
-		return {
-			userType: user.type,
-			startRound: game.startRound
-		};
+	view: function () {
 
+		return [
+			m('p', ctrl.category()),
+			m('button', { onclick: ctrl.startRound }, 'Start Round')
+		];
+
+	}
+
+};
+
+components.screen.categoryInfo = components.player.categoryInfo = {
+
+	controller: function () {
+		return { category: game.category };
 	},
 
 	view: function (ctrl) {
-
-		var view = [game.category()];
-
-		if (ctrl.userType() === 'host') {
-			view.push(m('button', { onclick: ctrl.startRound }, 'Start Round'));
-		}
-
-		return view;
-
+		return ('p', ctrl.category());
 	}
 
 };
