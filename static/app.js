@@ -589,7 +589,7 @@ socket.on('answer-submitted', function (users) {
 });
 
 socket.on('answers-view', function (answers) {
-	mountComponent(main, 'chooseCategory', { answers: answers });
+	mountComponent(main, 'answers', { answers: answers });
 });
 
 socket.on('winners', function (winners) {
