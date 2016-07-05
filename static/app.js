@@ -123,6 +123,7 @@ var game = (function Game () {
 		user.submitted(true);
 		playersSubmitted(playersSubmitted().concat(user.name()));
 		socket.emit('submit-answer', user.answer());
+		m.mount(main, components.player.questionSubmitted);
 
 	}
 
@@ -284,7 +285,7 @@ components.host.categoryInfo = {
 		return { startRound: game.startRound, category: game.category };
 	},
 
-	view: function () {
+	view: function (ctrl) {
 
 		return [
 			m('p', ctrl.category()),
@@ -307,53 +308,83 @@ components.screen.categoryInfo = components.player.categoryInfo = {
 
 };
 
-var showQuestion = {
+components.host.question = {
 
-	controller: function (args) {
+	controller: function () {
 
 		return {
-			userType: user.type,
-			playersSubmitted: game.playersSubmitted,
 			question: game.question,
-			points: game.points,
-			submit: game.answer,
-			answer: user.answer,
-			submitted: user.submitted
+			playersSubmitted: game.playersSubmitted
 		};
 
 	},
 
-	view: function (ctrl, args) {
+	view: function (ctrl) {
 
-		if (ctrl.userType() === 'host') {
+		return [
+			m('p', ctrl.question().a),
+			m('ul', ctrl.playersSubmitted().map(function (player) {
+				return m('li', player);
+			}))
+		];
 
-			return [
-				ctrl.question().a,
-				m('ul', ctrl.playersSubmitted().map(function (player) {
-					return m('li', player);
-				}))
-			];
+	}
 
-		} else if (ctrl.userType() === 'screen') {
-			return [ctrl.question().q, `${ctrl.points()} point(s).`];
-		} else {
+};
 
-			if (ctrl.submitted()) {
+components.screen.question = {
 
-				return m('ul', ctrl.playersSubmitted().map(function (player) {
-					return m('li', player);
-				}));
+	controller: function () {
+		return { question: game.question, points: game.points };
+	},
 
-			}
+	view: function (ctrl) {
 
-			return [
-				ctrl.question().q,
-				m('input', { type: 'text', placeholder: 'Enter answer here...',
-					onchange: m.withAttr('value', ctrl.answer) }),
-				m('button', { onclick: ctrl.submit }, 'Submit')
-			];
+		return [
+			m('p', ctrl.question().q),
+			m('p', `${ctrl.points()} point(s).`)
+		];
 
-		}
+	}
+
+};
+
+components.player.question = {
+
+	controller: function () {
+
+		return {
+			question: game.question,
+			answer: user.answer,
+			submit: game.answer
+		};
+
+	},
+
+	view: function (ctrl) {
+
+		return [
+			m('p', ctrl.question().q),
+			m('input', { type: 'text', placeholder: 'Enter answer here...',
+				onchange: m.withAttr('value', ctrl.answer) }),
+			m('button', { onclick: ctrl.submit }, 'Submit')
+		];
+
+	}
+
+};
+
+components.player.questionSubmitted = {
+
+	controller: function () {
+		return { playersSubmitted: game.playersSubmitted };
+	},
+
+	view: function (ctrl) {
+
+		return m('ul', ctrl.playersSubmitted().map(function (player) {
+			return m('li', player);
+		}));
 
 	}
 
@@ -512,7 +543,7 @@ socket.on('show-category', function (category) {
 		game.category(category);
 	}
 
-	m.mount(main, categoryInfo);
+	m.mount(main, components[user.type()].categoryInfo);
 
 });
 
@@ -523,7 +554,7 @@ socket.on('scores-view', function (scores) {
 socket.on('question-view', function (question) {
 
 	game.question(question);
-	m.mount(main, showQuestion);
+	m.mount(main, components[user.type()].question);
 
 });
 
