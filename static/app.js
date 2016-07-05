@@ -26,8 +26,17 @@ var user = (function User () {
 	// Sets the user to a given type.
 	function setUser (userType) {
 
-		socket.emit('add-user', userType);
+		var previous = localStorage.userID;
+		socket.emit('add-user', { type: userType, previous: previous });
 		type(userType);
+
+	}
+
+	// Saves the user name and ID.
+	function saveUser (userName) {
+
+		localStorage.userID = `/#${socket.id}`;
+		name(userName);
 
 	}
 
@@ -35,6 +44,7 @@ var user = (function User () {
 
 	return {
 		set: setUser,
+		save: saveUser,
 		name: name,
 		type: type,
 		answer: answer,
@@ -544,7 +554,7 @@ socket.on('begin-fail', function (msg) {
 // Saves the user's name when they are accepted.
 socket.on('client-accepted', function (userName) {
 
-	user.name(userName);
+	user.save(userName);
 	mountComponent(main, 'gatheringPlayers');
 
 });
