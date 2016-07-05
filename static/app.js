@@ -123,7 +123,7 @@ var game = (function Game () {
 		user.submitted(true);
 		playersSubmitted(playersSubmitted().concat(user.name()));
 		socket.emit('submit-answer', user.answer());
-		m.mount(main, components.player.questionSubmitted);
+		mountComponent(main, 'questionSubmitted');
 
 	}
 
@@ -157,6 +157,15 @@ var game = (function Game () {
 
 
 // ----- Components ----- //
+
+// Mounts a component to a given location, with args.
+function mountComponent (location, name, args, all) {
+
+	var component = all ? components.all[name] : components[user.type()][name];
+
+	m.mount(location, args ? m.component(component, args) : component);
+
+}
 
 // A set of components based upon user type.
 var components = { host: {}, player: {}, screen: {}, all: {} };
@@ -524,11 +533,7 @@ socket.on('client-disconnect', function (name) {
 
 // Mounts the category view.
 socket.on('category-view', function (categories) {
-
-	var component = components[user.type()].chooseCategory;
-	var args = { categories: categories };
-	m.mount(main, m.component(component, args));
-
+	mountComponent(main, 'chooseCategory', { categories: categories });
 });
 
 // Displays an error message when game fails to begin.
@@ -540,7 +545,7 @@ socket.on('begin-fail', function (msg) {
 socket.on('client-accepted', function (userName) {
 
 	user.name(userName);
-	m.mount(main, components[user.type()].gatheringPlayers);
+	mountComponent(main, 'gatheringPlayers');
 
 });
 
@@ -561,22 +566,18 @@ socket.on('show-category', function (category) {
 		game.category(category);
 	}
 
-	m.mount(main, components[user.type()].categoryInfo);
+	mountComponent(main, 'categoryInfo');
 
 });
 
 socket.on('scores-view', function (scores) {
-
-	var component = components[user.type()].scores;
-	var args = { scores: scores };
-	m.mount(main, m.component(component, args));
-
+	mountComponent(main, 'scores', { scores: scores });
 });
 
 socket.on('question-view', function (question) {
 
 	game.question(question);
-	m.mount(main, components[user.type()].question);
+	mountComponent(main, 'question');
 
 });
 
@@ -588,19 +589,15 @@ socket.on('answer-submitted', function (users) {
 });
 
 socket.on('answers-view', function (answers) {
-
-	var component = components[user.type()].answers;
-	var args = { answers: answers };
-	m.mount(main, m.component(component, args));
-
+	mountComponent(main, 'chooseCategory', { answers: answers });
 });
 
 socket.on('winners', function (winners) {
-	m.mount(main, m.component(components.all.winners, { winners: winners }));
+	mountComponent(main, 'chooseCategory', { winners: winners }, true);
 });
 
 
 // ----- Default Components ----- //
 
-m.mount(main, components.all.chooseUser);
-m.mount(header, components.all.head);
+mountComponent(main, 'chooseUser', null, true);
+mountComponent(header, 'head', null, true);
