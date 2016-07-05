@@ -461,28 +461,26 @@ components.player.answers = {
 
 };
 
-var showScores = {
+components.host.scores = {
 
-	controller: function (args) {
-
-		return {
-			userType: user.type,
-			nextRound: game.begin,
-			finish: game.finish
-		};
-
+	controller: function () {
+		return { nextRound: game.begin, finish: game.finish };
 	},
 
+	view: function (ctrl) {
+
+		return [
+			m('button', { onclick: ctrl.nextRound }, 'Next Round'),
+			m('button', { onclick: ctrl.finish }, 'Finish')
+		];
+
+	}
+
+};
+
+components.screen.scores = components.player.scores = {
+
 	view: function (ctrl, args) {
-
-		if (ctrl.userType() === 'host') {
-
-			return [
-				m('button', { onclick: ctrl.nextRound }, 'Next Round'),
-				m('button', { onclick: ctrl.finish }, 'Finish')
-			];
-
-		}
 
 		return args.scores.map(function (score) {
 			return [m('h3', score.user), score.score];
@@ -570,7 +568,11 @@ socket.on('show-category', function (category) {
 });
 
 socket.on('scores-view', function (scores) {
-	m.mount(main, m.component(showScores, { scores: scores }));
+
+	var component = components[user.type()].scores;
+	var args = { scores: scores };
+	m.mount(main, m.component(component, args));
+
 });
 
 socket.on('question-view', function (question) {
