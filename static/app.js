@@ -364,8 +364,8 @@ components.host.question = {
 	view: function (ctrl) {
 
 		return [
-			m('p', ctrl.question().a),
-			m('ul', ctrl.playersSubmitted().map(function (player) {
+			m('h2.question-answer', ctrl.question().a),
+			m('ul.player-list', ctrl.playersSubmitted().map(function (player) {
 				return m('li', player);
 			}))
 		];
@@ -383,8 +383,8 @@ components.screen.question = {
 	view: function (ctrl) {
 
 		return [
-			m('p', ctrl.question().q),
-			m('p', `${ctrl.points()} point(s).`)
+			m('h1.screen-question', ctrl.question().q),
+			m('h3.question-points', `${ctrl.points()} point(s).`)
 		];
 
 	}
@@ -406,9 +406,12 @@ components.player.question = {
 	view: function (ctrl) {
 
 		return [
-			m('p', ctrl.question().q),
-			m('input', { type: 'text', placeholder: 'Enter answer here...',
-				onchange: m.withAttr('value', ctrl.answer) }),
+			m('h2.player-question', ctrl.question().q),
+			m('textarea.input-answer', {
+				placeholder: 'Enter answer here...',
+				onchange: m.withAttr('value', ctrl.answer),
+				rows: 3
+			}),
 			m('button', { onclick: ctrl.submit }, 'Submit')
 		];
 
@@ -424,9 +427,12 @@ components.player.questionSubmitted = {
 
 	view: function (ctrl) {
 
-		return m('ul', ctrl.playersSubmitted().map(function (player) {
+		// A player list item.
+		function playerItem (player) {
 			return m('li', player);
-		}));
+		}
+
+		return m('ul.player-list',ctrl.playersSubmitted().map(playerItem));
 
 	}
 

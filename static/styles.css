@@ -126,3 +126,24 @@ main, header {
 .start-round {
 	margin-top: 4em;
 }
+
+
+/* ----- Component - Question ----- */
+
+.question-answer, .screen-question, .player-question {
+	color: #266;
+	margin-bottom: 3em;
+	text-align: center;
+}
+
+.question-points {
+	color: #2d882d;
+	text-align: center;
+}
+
+.input-answer {
+	font-size: x-large;
+	margin-bottom: 3em;
+	resize: none;
+	color: #aa6c39;
+}
