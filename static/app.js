@@ -247,7 +247,7 @@ components.host.gatheringPlayers = {
 
 		return [
 			m('button.begin', { onclick: ctrl.begin }, 'Begin'),
-			m('p.gathering-players', 'Gathering Players...')
+			m('p.loading-message', 'Gathering Players...')
 		];
 
 	}
@@ -263,7 +263,7 @@ components.screen.gatheringPlayers = {
 	view: function (ctrl) {
 
 		return [
-			m('p.gathering-players', 'Gathering Players...'),
+			m('p.loading-message', 'Gathering Players...'),
 			m('ul.player-list', ctrl.users().map(function (singleUser) {
 				return m('li', singleUser);
 			}))
@@ -276,7 +276,7 @@ components.screen.gatheringPlayers = {
 components.player.gatheringPlayers = {
 
 	view: function (ctrl) {
-		return m('p.gathering-players', 'Gathering players...');
+		return m('p.loading-message', 'Gathering players...');
 	}
 
 };
@@ -291,7 +291,7 @@ components.host.chooseCategory = {
 
 		return args.categories.map(function (category) {
 
-			return m('button', {
+			return m('button.category-choice', {
 				onclick: function () { ctrl.category(category); }
 			}, category);
 
@@ -305,7 +305,7 @@ components.screen.chooseCategory = {
 
 	view: function (ctrl, args) {
 
-		return m('ul', args.categories.map(function (category) {
+		return m('ul.category-list', args.categories.map(function (category) {
 			return m('li', category);
 		}));
 
@@ -316,7 +316,7 @@ components.screen.chooseCategory = {
 components.player.chooseCategory = {
 
 	view: function (ctrl) {
-		return m('p', 'Category being chosen...');
+		return m('p.loading-message', 'Category being chosen...');
 	}
 
 };

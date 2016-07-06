@@ -20,6 +20,12 @@ button {
 	cursor: pointer;
 }
 
+.loading-message {
+	font-size: x-large;
+	color: #aa3939;
+	text-align: center;
+}
+
 
 /* ----- Main & Header ----- */
 
@@ -68,12 +74,6 @@ main, header {
 
 /* ----- Component - Gathering Players ----- */
 
-.gathering-players {
-	font-size: x-large;
-	color: #aa3939;
-	text-align: center;
-}
-
 .begin {
 	margin-bottom: 1em;
 }
@@ -90,4 +90,25 @@ main, header {
 	margin: 0;
 	padding: 0;
 	font-size: large;
+}
+
+
+/* ----- Component - Choose Category */
+
+.category-choice {
+	margin: 3% 0;
+}
+
+.category-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #2d882d;
+}
+
+.category-list > li {
+	margin: 2% 0;
+	padding: 0;
+	font-size: xx-large;
 }
