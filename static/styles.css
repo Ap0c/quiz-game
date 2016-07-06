@@ -147,3 +147,38 @@ main, header {
 	resize: none;
 	color: #aa6c39;
 }
+
+
+/* ----- Component - Answers ----- */
+
+.user-label {
+	color: #266;
+	font-size: x-large;
+	font-weight: bold;
+	display: block;
+	text-align: center;
+}
+
+.input-score {
+	color: #2d882d;
+	font-size: large;
+	margin: 1em 0;
+	width: 100%;
+}
+
+.score-button {
+	font-size: x-large;
+	width: 100%;
+	margin-top: 2em;
+}
+
+.answer-user {
+	color: #266;
+	text-align: center;
+}
+
+.answer {
+	color: #aa6c39;
+	font-size: large;
+	text-align: center;
+}

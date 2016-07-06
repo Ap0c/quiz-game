@@ -462,8 +462,8 @@ components.host.answers = {
 			var id = `score-input-${answerNumber}`;
 
 			return [
-				m('label', { for: id }, answer.user.name),
-				m('input', {
+				m('label.user-label', { for: id }, answer.user.name),
+				m('input.input-score', {
 					id: id,
 					type: 'number',
 					onchange: m.withAttr('value',
@@ -477,7 +477,7 @@ components.host.answers = {
 		return [
 			m('form', { onsubmit: ctrl.submit }, [
 				args.answers.map(answerScore),
-				m('button[type="submit"', 'Score')
+				m('button[type="submit"].score-button', 'Score')
 			])
 		];
 
@@ -490,7 +490,12 @@ components.screen.answers = {
 	view: function (ctrl, args) {
 
 		return args.answers.map(function (answer) {
-			return [m('h3', answer.user.name), answer.answer];
+
+			return [
+				m('h2.answer-user', answer.user.name),
+				m('p.answer', answer.answer)
+			];
+
 		});
 
 	}
@@ -504,7 +509,7 @@ components.player.answers = {
 	},
 
 	view: function (ctrl) {
-		return ctrl.question().q;
+		return m('h2.player-question', ctrl.question().q);
 	}
 
 };
