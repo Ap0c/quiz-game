@@ -189,7 +189,7 @@ var components = { host: {}, player: {}, screen: {}, all: {} };
 components.all.head = {
 
 	view: function (ctrl) {
-		return m('h3', user.name());
+		return m('h3', user.name() || 'Choose User');
 	}
 
 };
@@ -246,8 +246,8 @@ components.host.gatheringPlayers = {
 	view: function (ctrl) {
 
 		return [
-			m('p.gathering-players', 'Gathering Players...'),
-			m('button.begin', { onclick: ctrl.begin }, 'Begin')
+			m('button.begin', { onclick: ctrl.begin }, 'Begin'),
+			m('p.gathering-players', 'Gathering Players...')
 		];
 
 	}
