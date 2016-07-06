@@ -246,7 +246,7 @@ components.host.gatheringPlayers = {
 	view: function (ctrl) {
 
 		return [
-			m('p', 'Gathering Players...'),
+			m('p.gathering-players', 'Gathering Players...'),
 			m('button.begin', { onclick: ctrl.begin }, 'Begin')
 		];
 
@@ -263,7 +263,7 @@ components.screen.gatheringPlayers = {
 	view: function (ctrl) {
 
 		return [
-			m('p', 'Gathering Players...'),
+			m('p.gathering-players', 'Gathering Players...'),
 			m('ul', ctrl.users().map(function (singleUser) {
 				return m('li', singleUser);
 			}))
@@ -276,7 +276,7 @@ components.screen.gatheringPlayers = {
 components.player.gatheringPlayers = {
 
 	view: function (ctrl) {
-		return m('p', 'Gathering players...');
+		return m('p.gathering-players', 'Gathering players...');
 	}
 
 };
