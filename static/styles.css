@@ -17,6 +17,7 @@ button {
 	display: block;
 	font-size: xx-large;
 	padding: .5em;
+	cursor: pointer;
 }
 
 
@@ -75,4 +76,18 @@ main, header {
 
 .begin {
 	margin-bottom: 1em;
+}
+
+.player-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #2d882d;
+}
+
+.player-list > li {
+	margin: 0;
+	padding: 0;
+	font-size: large;
 }

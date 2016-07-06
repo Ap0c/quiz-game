@@ -264,7 +264,7 @@ components.screen.gatheringPlayers = {
 
 		return [
 			m('p.gathering-players', 'Gathering Players...'),
-			m('ul', ctrl.users().map(function (singleUser) {
+			m('ul.player-list', ctrl.users().map(function (singleUser) {
 				return m('li', singleUser);
 			}))
 		];
