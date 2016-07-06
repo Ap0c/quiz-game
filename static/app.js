@@ -330,8 +330,8 @@ components.host.categoryInfo = {
 	view: function (ctrl) {
 
 		return [
-			m('p', ctrl.category()),
-			m('button', { onclick: ctrl.startRound }, 'Start Round')
+			m('h1.category-name', ctrl.category()),
+			m('button.start-round', { onclick: ctrl.startRound }, 'Start Round')
 		];
 
 	}
@@ -345,7 +345,7 @@ components.screen.categoryInfo = components.player.categoryInfo = {
 	},
 
 	view: function (ctrl) {
-		return ('p', ctrl.category());
+		return m('h1.category-name', ctrl.category());
 	}
 
 };

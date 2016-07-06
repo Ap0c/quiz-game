@@ -89,7 +89,7 @@ main, header {
 .player-list > li {
 	margin: 0;
 	padding: 0;
-	font-size: large;
+	font-size: x-large;
 }
 
 
@@ -97,6 +97,7 @@ main, header {
 
 .category-choice {
 	margin: 3% 0;
+	font-size: x-large;
 }
 
 .category-list {
@@ -111,4 +112,17 @@ main, header {
 	margin: 2% 0;
 	padding: 0;
 	font-size: xx-large;
+}
+
+
+/* ----- Component - Category Info ----- */
+
+.category-name {
+	color: #2d882d;
+	text-align: center;
+	font-weight: normal;
+}
+
+.start-round {
+	margin-top: 4em;
 }
