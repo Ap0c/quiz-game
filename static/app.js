@@ -454,7 +454,11 @@ components.host.answers = {
 
 		}
 
-		return { submit: scoresSubmit, score: game.saveScore };
+		return {
+			submit: scoresSubmit,
+			score: game.saveScore,
+			question: game.question
+		};
 
 	},
 
@@ -479,9 +483,16 @@ components.host.answers = {
 		}
 
 		return [
-			m('form', { onsubmit: ctrl.submit }, [
-				args.answers.map(answerScore),
-				m('button[type="submit"].score-button', 'Score')
+			m('div.scroll', [
+				m('h2.score-title', 'Answers'),
+				ctrl.question().a.map(function (answer) {
+					return m('h3.question-answer', answer);
+				}),
+				m('h2.score-title', 'Score Players'),
+				m('form', { onsubmit: ctrl.submit }, [	
+					args.answers.map(answerScore),
+					m('button[type="submit"].score-button', 'Score')
+				])
 			])
 		];
 

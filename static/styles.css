@@ -130,6 +130,13 @@ main, header {
 
 /* ----- Component - Question ----- */
 
+.scroll {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow-y: scroll;
+}
+
 .answer-title, .players-submitted {
 	color: #266;
 	text-align: center;
@@ -138,7 +145,8 @@ main, header {
 .question-answer {
 	color: #aa6c39;
 	text-align: center;
-	margin: .1em, 0;
+	margin: .2em 0;
+	font-weight: normal;
 }
 
 .screen-question, .player-question {
@@ -162,8 +170,14 @@ main, header {
 
 /* ----- Component - Answers ----- */
 
-.user-label {
+.score-title {
 	color: #266;
+	text-align: center;
+	margin-top: 2em;
+}
+
+.user-label {
+	color: #aa6c39;
 	font-size: x-large;
 	font-weight: bold;
 	display: block;
@@ -181,6 +195,7 @@ main, header {
 	font-size: x-large;
 	width: 100%;
 	margin-top: 4em;
+	margin-bottom: 2em;
 }
 
 .answer-user {
