@@ -169,7 +169,7 @@ main, header {
 .score-button {
 	font-size: x-large;
 	width: 100%;
-	margin-top: 2em;
+	margin-top: 4em;
 }
 
 .answer-user {
@@ -182,3 +182,22 @@ main, header {
 	font-size: large;
 	text-align: center;
 }
+
+
+/* ----- Component - Scores ----- */
+
+.score-button {
+	margin: .5em 0;
+}
+
+.scores-user {
+	color: #266;
+	text-align: center;
+}
+
+.score {
+	color: #aa6c39;
+	font-size: large;
+	text-align: center;
+}
+

@@ -523,8 +523,8 @@ components.host.scores = {
 	view: function (ctrl) {
 
 		return [
-			m('button', { onclick: ctrl.nextRound }, 'Next Round'),
-			m('button', { onclick: ctrl.finish }, 'Finish')
+			m('button.score-button', { onclick: ctrl.nextRound }, 'Next Round'),
+			m('button.score-button', { onclick: ctrl.finish }, 'Finish')
 		];
 
 	}
@@ -536,7 +536,7 @@ components.screen.scores = components.player.scores = {
 	view: function (ctrl, args) {
 
 		return args.scores.map(function (score) {
-			return [m('h3', score.user), score.score];
+			return [m('h2.scores-user', score.user), m('p.score', score.score)];
 		});
 
 	}
