@@ -64,7 +64,7 @@ main, header {
 
 }
 
-@media (min-width: 1024) {
+@media (min-width: 1024px) {
 
 	main, header {
 		width: 40em;
@@ -232,7 +232,7 @@ main, header {
 
 .score {
 	color: #aa6c39;
-	font-size: x-large;
+	font-size: xx-large;
 	text-align: center;
 }
 
