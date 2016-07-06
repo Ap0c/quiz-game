@@ -5,3 +5,4 @@ jshint.json
 *.log
 coverage/*
 static/mithril*
+questions.json

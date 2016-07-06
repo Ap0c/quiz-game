@@ -58,6 +58,15 @@ main, header {
 @media (min-width: 640px) {
 
 	main, header {
+		width: 30em;
+		margin: 0 auto 0;
+	}
+
+}
+
+@media (min-width: 1024) {
+
+	main, header {
 		width: 40em;
 		margin: 0 auto 0;
 	}
@@ -223,7 +232,7 @@ main, header {
 
 .score {
 	color: #aa6c39;
-	font-size: large;
+	font-size: x-large;
 	text-align: center;
 }
 

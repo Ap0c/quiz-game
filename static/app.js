@@ -364,7 +364,7 @@ components.host.question = {
 	view: function (ctrl) {
 
 		return [
-			m('h2.answer-title', 'Answer(s)'),
+			m('h2.answer-title', 'Correct Answer(s)'),
 			ctrl.question().a.map(function (answer) {
 				return m('h3.question-answer', answer);
 			}),
