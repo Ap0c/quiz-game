@@ -550,14 +550,14 @@ components.all.winners = {
 		if (args.winners.length > 1) {
 
 			return [
-				m('h2', 'The Winners Are:'),
+				m('h1.winner-title', 'The Winners!'),
 				args.winners.map(function (winner) {
-					return m('h3', winner.user);
+					return m('h2.winner', winner.user);
 				})
 			];
 
 		} else {
-			return m('h2', `${args.winners[0].user} wins!`);
+			return m('h1.winner-title', `${args.winners[0].user} wins!`);
 		}
 
 	}
@@ -642,7 +642,7 @@ socket.on('answers-view', function (answers) {
 });
 
 socket.on('winners', function (winners) {
-	mountComponent(main, 'chooseCategory', { winners: winners }, true);
+	mountComponent(main, 'winners', { winners: winners }, true);
 });
 
 

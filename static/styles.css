@@ -201,3 +201,15 @@ main, header {
 	text-align: center;
 }
 
+
+/* ----- Component - Winners ----- */
+
+.winner-title {
+	color: #266;
+	text-align: center;
+}
+
+.winner {
+	color: #aa6c39;
+	text-align: center;
+}
