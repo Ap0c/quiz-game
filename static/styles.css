@@ -3,3 +3,39 @@
 html, body {
 	font-family: sans-serif;
 }
+
+
+/* ----- Main & Header ----- */
+
+header {
+	text-align: center;
+	color: #aa6c39;
+	font-size: x-large;
+}
+
+main, header {
+	margin: 3% 5% 0;
+}
+
+@media (min-width: 640px) {
+
+	main, header {
+		width: 40em;
+		margin: 2em auto 0;
+	}
+
+}
+
+
+/* ----- Component - Choose User ----- */
+
+.choose-user {
+	background-color: #266;
+	border: none;
+	color: #fff;
+	display: block;
+	font-size: xx-large;
+	margin: .5em 0;
+	padding: .5em;
+	width: 100%;
+}

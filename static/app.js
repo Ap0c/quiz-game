@@ -222,13 +222,13 @@ components.all.chooseUser = {
 		}
 
 		return [
-			m('button.choose-player', {
+			m('button.choose-user', {
 				onclick: function () { chooseUser('player'); }
 			}, 'Player'),
-			m('button.choose-host', {
+			m('button.choose-user', {
 				onclick: function () { chooseUser('host'); }
 			}, 'Host'),
-			m('button.choose-screen', {
+			m('button.choose-user', {
 				onclick: function () { chooseUser('screen'); }
 			}, 'Screen')
 		];
