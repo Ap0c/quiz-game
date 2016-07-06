@@ -364,7 +364,11 @@ components.host.question = {
 	view: function (ctrl) {
 
 		return [
-			m('h2.question-answer', ctrl.question().a),
+			m('h2.answer-title', 'Answer(s)'),
+			ctrl.question().a.map(function (answer) {
+				return m('h3.question-answer', answer);
+			}),
+			m('h2.players-submitted', 'Submitted'),
 			m('ul.player-list', ctrl.playersSubmitted().map(function (player) {
 				return m('li', player);
 			}))

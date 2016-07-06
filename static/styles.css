@@ -130,7 +130,18 @@ main, header {
 
 /* ----- Component - Question ----- */
 
-.question-answer, .screen-question, .player-question {
+.answer-title, .players-submitted {
+	color: #266;
+	text-align: center;
+}
+
+.question-answer {
+	color: #aa6c39;
+	text-align: center;
+	margin: .1em, 0;
+}
+
+.screen-question, .player-question {
 	color: #266;
 	margin-bottom: 3em;
 	text-align: center;
